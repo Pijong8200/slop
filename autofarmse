@@ -2,6 +2,11 @@
 repeat task.wait() until game:IsLoaded()
 
 -- 2. Send the notification popup
+local starterGui = game:GetService("StarterGui")
+while not starterGui do
+    task.wait(0.5)
+    starterGui = game:GetService("StarterGui")
+end
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Success!",
     Text = "Re-executed after server hopping!",
