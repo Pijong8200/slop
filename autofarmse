@@ -1,3 +1,24 @@
+-- 1. Wait for the new server to load completely
+repeat task.wait() until game:IsLoaded()
+
+-- 2. Send the notification popup
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Success!",
+    Text = "Re-executed after server hopping!",
+    Duration = 10
+})
+
+-- 3. THE INF-LOOP BACKUP PLAN
+-- This tells Roblox: "When I leave this current server, remember my GitHub link for the next one!"
+local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
+if queue then
+    queue([[
+        repeat task.wait() until game:IsLoaded()
+        local cacheBuster = "?t=" .. tostring(math.random(1, 100000))
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse" .. cacheBuster))()
+    ]])
+end
+
 -- services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
