@@ -305,11 +305,10 @@ print("wave 1 places freddy 1, 2")
 --// Wave 2
 repeat task.wait() until wave.Value == 2
 	deploy(freddy4)
-upgrade(freddyUpgrades)
+deploy(tungmidas)
       print("wave 2 deployes last freddy and upgradd all freddy")
 
 repeat task.wait() until wave.Value == 3
-deploy(tungmidas)
 deploy(tungmidas2)
 upgrade(upgradeAll)
 
