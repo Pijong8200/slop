@@ -15,8 +15,8 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Re-executed after server hopping!",
-        Duration = 10
+        Text = "Loop restarted.",
+        Duration = 5
     })
 end)
 
@@ -261,7 +261,7 @@ while wave.Value == 2 do
 	deploy(freddy4)
 	task.wait(1)
     upgrade(freddy)
-      print("upgraded freddy1")
+      print("upgraded freddy")
 	break
 end
 
