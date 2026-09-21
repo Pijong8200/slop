@@ -238,7 +238,7 @@ local dj = {
 
 local tungmidas = {
 	"Tung Tung Midas",
-	CFrame.new(9, -93, 67),
+	CFrame.new(9, -93, 78),
 	false,
 	"Tung Tung Midas Gold",
 	{"Gold"}
@@ -246,7 +246,7 @@ local tungmidas = {
 
 local tungmidas2 = {
 	"Tung Tung Midas",
-	CFrame.new(12, -93, 67),
+	CFrame.new(12, -93, 78),
 	false,
 	"Tung Tung Midas Gold",
 	{"Gold"}
@@ -288,25 +288,19 @@ speedRemote:InvokeServer(5)
 --// Wave 0
 if wave and wave.Value == 0 then
 	deploy(freddy)
-print("success to place Freddy at wave 0")
-else
-print("failed to find wave value, please wait...")
 end
-
 
 --// Wave 1
 repeat task.wait() until wave.Value == 1
 	deploy(freddy2)
 	task.wait(0.5)
 	deploy(freddy3)
-print("wave 1 places freddy 1, 2")
 
 
 --// Wave 2
 repeat task.wait() until wave.Value == 2
 	deploy(freddy4)
-deploy(tungmidas)
-      print("wave 2 deployes last freddy and upgradd all freddy")
+ deploy(tungmidas)
 
 repeat task.wait() until wave.Value == 3
 deploy(tungmidas2)
