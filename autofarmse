@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.1 loaded.",
+        Text = "Build v1.2 loaded.",
         Duration = 5
     })
 end)
@@ -128,6 +128,8 @@ end
 
 
 --// Tower upgrading
+
+
 local function upgrade(towerTable)
 	for _, towerData in ipairs(towerTable) do
 		local towerName = towerData[1]
@@ -305,8 +307,14 @@ repeat task.wait() until wave.Value == 2
 repeat task.wait() until wave.Value == 3
 deploy(tungmidas2)
 upgrade(upgradeAll)
+upgrade(upgradeAll)
 
 repeat task.wait() until wave.Value == 4
+upgrade(freddyUpgrades)
+task.wait(1)
+upgrade(freddyUpgrades)
+
+repeat task.wait() until wave.Value == 6
 deploy(isaac)
 upgrade(upgradeAll)
 print("upgraded all and places isaac in wave 3")
