@@ -1,21 +1,29 @@
+-- 1. Wait for the new server to load completely
 repeat task.wait() until game:IsLoaded()
+
+-- FIX: Safely wait for the StarterGui service to exist
 local starterGui = game:GetService("StarterGui")
 while not starterGui do
     task.wait(0.5)
     starterGui = game:GetService("StarterGui")
 end
-game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "Success!",
-    Text = "Re-executed after server hopping!",
-    Duration = 10
-})
 
+-- 2. Send the notification popup safely
+pcall(function()
+    starterGui:SetCore("SendNotification", {
+        Title = "Success!",
+        Text = "Re-executed after server hopping!",
+        Duration = 10
+    })
+end)
+
+-- 3. THE INF-LOOP BACKUP PLAN
 local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
 if queue then
     queue([[
         repeat task.wait() until game:IsLoaded()
         local cacheBuster = "?t=" .. tostring(math.random(1, 100000))
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse" .. cacheBuster))()
+        loadstring(game:HttpGet("" .. cacheBuster))()
     ]])
 end
 
@@ -234,7 +242,7 @@ while wave.Value == 2 do
 	deploy(freddy4)
 	task.wait(1)
     upgrade(freddy)
-      print("upgraded freddy")
+      print("upgraded freddy1")
 	break
 end
 
