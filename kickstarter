@@ -251,7 +251,11 @@ while wave.Value == 2 do
 	task.wait(1)
     upgrade(freddyUpgrades)
       print("upgraded freddies")
-	break
+end
+
+while wave.Value == 3 do
+upgrade(freddyUpgrades)
+print("upgraded Freddies at wave 3")
 end
 
 --// Rest of script continues below
