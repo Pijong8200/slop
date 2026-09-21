@@ -154,7 +154,7 @@ local function upgrade(towerTable)
 					distance
 				)
 
-				if distance < 2 then
+				if distance < 1 then
 					print("UPGRADING:", towerInstance.Name)
 
 					upgradeRemote:InvokeServer(
