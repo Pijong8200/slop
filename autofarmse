@@ -318,8 +318,8 @@ upgrade(freddyUpgrades)
 
 repeat task.wait() until wave.Value == 6
 deploy(isaac)
-upgrade(upgradeAll)
-print("upgraded all and places isaac in wave 3")
+task.wait(0.5)
+deploy(isaac2)
 
 --repeat task.wait() until wave.Value == 4
 --deploy(tungmidas)
