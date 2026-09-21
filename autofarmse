@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.8 loaded.",
+        Text = "Build v1.9 loaded.",
         Duration = 5
     })
 end)
