@@ -258,4 +258,14 @@ upgrade(freddyUpgrades)
 print("upgraded Freddies at wave 3")
 end
 
+while wave.Value == 4 do
+upgrade(freddyUpgrades)
+print("upgraded Freddies at wave 4")
+end
+
+while wave.Value == 6 do
+deploy(isaac)
+print("placed isaac at wave 6")
+end
+
 --// Rest of script continues below
