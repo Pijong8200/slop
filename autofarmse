@@ -131,45 +131,24 @@ end
 
 
 local function upgrade(towerTable)
-	local usedTowers = {}
-
 	for _, towerData in ipairs(towerTable) do
 		local towerName = towerData[1]
-		local targetPosition = towerData[2].Position
+		local towerCFrame = towerData[2]
 		local variantName = towerData[4]
 
-		print("Looking for:", towerName)
-		print("Target position:", targetPosition)
-		print("Upgrade variant:", variantName)
-
 		for _, towerInstance in ipairs(towersFolder:GetChildren()) do
-			if not usedTowers[towerInstance] and towerInstance.Name == towerName then
+			if towerInstance.Name == towerName then
 				local towerPosition = towerInstance:GetPivot().Position
-				local distance = (towerPosition - targetPosition).Magnitude
+				local targetPosition = towerCFrame.Position
 
-				print(
-					"Found matching name:",
-					towerInstance.Name,
-					"Distance:",
-					distance
-				)
-
-				if distance < 1 then
-					print("UPGRADING:", towerInstance.Name)
-
-					upgradeRemote:InvokeServer(
-						towerInstance,
-						variantName
-					)
-
-					usedTowers[towerInstance] = true
+				if (towerPosition - targetPosition).Magnitude < 2 then
+					upgradeRemote:InvokeServer(towerInstance, variantName)
 					break
 				end
 			end
 		end
 	end
 end
-
 
 
 --// Freddy tower creator
@@ -323,8 +302,14 @@ repeat task.wait() until wave.Value == 2
 	deploy(freddy4)
  deploy(tungmidas)
 
-repeat task.wait() until wave.Value == 3
+while wave.Value == 2 do
+task.wait(0.5)
+if cash and cash.Value => 999 then
 deploy(tungmidas2)
+end
+end
+
+repeat task.wait() until wave.Value == 3
 task.wait(1)
 upgrade(upgradeAll)
 upgrade(upgradeAll)
