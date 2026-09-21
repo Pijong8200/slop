@@ -176,6 +176,8 @@ local freddyUpgrades = {
 
 local upgradeAll = {
 tungmidas,
+tungmidas2
+}
 
 
 local aliennub = {
