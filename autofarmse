@@ -299,17 +299,19 @@ repeat task.wait() until wave.Value == 1
 	deploy(freddy2)
 	task.wait(0.5)
 	deploy(freddy3)
- deploy(tungmidas)
-print("wave 1 places freddy 1, 2 and tungmidas 1")
+print("wave 1 places freddy 1, 2")
 
 
 --// Wave 2
 repeat task.wait() until wave.Value == 2
 	deploy(freddy4)
-    upgrade(freddyUpgrades)
-      print("wave 2 deplayed freddy4 and upgraded all freddies")
+ deploy(tungmidas)
+ deploy(tungmidas2)
+      print("wave 2 deployed last freddy abd 2 tungmidas")
 
 repeat task.wait() until wave.Value == 3
+upgrade(upgradeAll)
+repeat task.wait() until wave.Value == 4
 deploy(isaac)
 upgrade(upgradeAll)
 print("upgraded all and places isaac in wave 3")
