@@ -23,7 +23,7 @@ if queue then
     queue([[
         repeat task.wait() until game:IsLoaded()
         local cacheBuster = "?t=" .. tostring(math.random(1, 100000))
-        loadstring(game:HttpGet("" .. cacheBuster))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse" .. cacheBuster))()
     ]])
 end
 
