@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.7 loaded.",
+        Text = "Build v1.8 loaded.",
         Duration = 5
     })
 end)
@@ -196,11 +196,6 @@ local freddyUpgrades = {
 	freddy4
 }
 
-local upgradeAll = {
-tungmidas,
-tungmidas2
-}
-
 
 local aliennub = {
 	"Alien Noob",
@@ -290,6 +285,10 @@ local isaac2 = {
 	{}
 }
 
+local upgradeAll = {
+tungmidas,
+tungmidas2
+}
 
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
