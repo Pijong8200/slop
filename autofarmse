@@ -174,6 +174,10 @@ local freddyUpgrades = {
 	freddy4
 }
 
+local upgradeAll = {
+tungmidas,
+
+
 local aliennub = {
 	"Alien Noob",
 	CFrame.new(16, -94, 61),
@@ -214,33 +218,49 @@ local oc = {
 	{}
 }
 
-local isaac = {
-	"IsaacE9",
-	CFrame.new(43, -93, -1),
+local alien1x1 = {
+	"Alien 1x1x1x1",
+	CFrame.new(17, -93, 75),
 	false,
-	"IsaacE9",
+	"Alien 1x1x1x1",
 	{}
 }
 
-local maxwell = {
-	"Maxwell",
-	CFrame.new(12, -93, 75),
-	false,
-	"Maxwell",
-	{}
-}
-
-local buff = {
-	"Glistening Toilet",
+local dj = {
+	"DJ Toilet",
 	CFrame.new(14, -93, 75),
 	false,
-	"Glistening Toilet",
+	"DJ Toilet",
+	{}
+}
+
+local tungmidas = {
+	"Tung Tung Midas",
+	CFrame.new(9, -93, 71),
+	false,
+	"Tung Tung Midas Gold",
+	{"Gold"}
+}
+
+local tungmidas = {
+	"Tung Tung Midas",
+	CFrame.new(12, -93, 71),
+	false,
+	"Tung Tung Midas Gold",
+	{"Gold"}
+}
+
+local isaac = {
+	"IsaacE9",
+	CFrame.new(9, -93, 75),
+	false,
+	"IsaacE9",
 	{}
 }
 
 local isaac2 = {
 	"IsaacE9",
-	CFrame.new(9, -93, 71),
+	CFrame.new(12, -93, 75),
 	false,
 	"IsaacE9",
 	{}
@@ -288,7 +308,8 @@ repeat task.wait() until wave.Value == 3
 upgrade(freddyUpgrades)
 print("upgraded Freddies at wave 3")
 
-repeat task.wait() until wave.Value == 6
-deploy(isaac)
-print("placed isaac at wave 6")
+repeat task.wait() until wave.Value == 4
+deploy(tungmidas)
+deploy(tungmidas2)
+print("placed tungmidas 1 and 2 at wave 4")
 --// Rest of script continues below
