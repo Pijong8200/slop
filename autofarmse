@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.2 loaded.",
+        Text = "Build v1.3 loaded.",
         Duration = 5
     })
 end)
@@ -306,10 +306,12 @@ repeat task.wait() until wave.Value == 2
 
 repeat task.wait() until wave.Value == 3
 deploy(tungmidas2)
+task.wait(1)
 upgrade(upgradeAll)
 upgrade(upgradeAll)
 
 repeat task.wait() until wave.Value == 4
+task.wait(0.5)
 upgrade(freddyUpgrades)
 task.wait(1)
 upgrade(freddyUpgrades)
