@@ -242,7 +242,7 @@ local tungmidas = {
 	{"Gold"}
 }
 
-local tungmidas = {
+local tungmidas2 = {
 	"Tung Tung Midas",
 	CFrame.new(12, -93, 71),
 	false,
@@ -312,4 +312,5 @@ repeat task.wait() until wave.Value == 4
 deploy(tungmidas)
 deploy(tungmidas2)
 print("placed tungmidas 1 and 2 at wave 4")
+
 --// Rest of script continues below
