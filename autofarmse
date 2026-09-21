@@ -238,7 +238,7 @@ local dj = {
 
 local tungmidas = {
 	"Tung Tung Midas",
-	CFrame.new(9, -93, 71),
+	CFrame.new(9, -93, 67),
 	false,
 	"Tung Tung Midas Gold",
 	{"Gold"}
@@ -246,7 +246,7 @@ local tungmidas = {
 
 local tungmidas2 = {
 	"Tung Tung Midas",
-	CFrame.new(12, -93, 71),
+	CFrame.new(12, -93, 67),
 	false,
 	"Tung Tung Midas Gold",
 	{"Gold"}
