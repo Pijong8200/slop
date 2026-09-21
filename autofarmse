@@ -2,6 +2,13 @@
 repeat task.wait() until game:IsLoaded()
 
 -- FIX: Safely wait for the StarterGui service to exist
+
+local vim = game:GetService("VirtualInputManager")
+while not vim do
+    task.wait(0.5)
+    vim = game:GetService("VirtualInputManager")
+end
+
 local starterGui = game:GetService("StarterGui")
 while not starterGui do
     task.wait(0.5)
