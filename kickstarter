@@ -1,0 +1,231 @@
+local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
+if queue then
+    queue([[
+        repeat task.wait() until game:IsLoaded()
+        local cacheBuster = "?t=" .. tostring(math.random(1, 100000))
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse" .. cacheBuster))()
+    ]])
+    print("Loop begun.")
+    end
+
+--// Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Players = game:GetService("Players")
+
+
+--// Player variables
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+
+
+--// Lobby variables
+local events = ReplicatedStorage:WaitForChild("Events")
+local functions = ReplicatedStorage:WaitForChild("Functions", 0.1)
+
+
+--// Input manager
+local function tapKey(keyCode)
+	VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
+	task.wait(0.3)
+	VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
+end
+
+
+--// Match detector / lobby handling
+if not functions then
+	print("Not in match")
+
+	char:PivotTo(CFrame.new(-9, 61, 102))
+
+	tapKey(Enum.KeyCode.W)
+	tapKey(Enum.KeyCode.A)
+	tapKey(Enum.KeyCode.S)
+	tapKey(Enum.KeyCode.D)
+
+	task.wait(1)
+
+	events:WaitForChild("StartElevator"):FireServer("Elevator6")
+
+	print("Attempted to teleport")
+
+	task.wait(3)
+
+	return
+else
+	print("In game")
+end
+
+
+--// Match variables
+local cash = player:WaitForChild("Cash")
+
+local spawnRemote = functions:WaitForChild("SpawnTower")
+local speedRemote = functions:WaitForChild("ChangeSpeed")
+local upgradeRemote = functions:WaitForChild("UpgradeTower")
+
+local playerGui = player:WaitForChild("PlayerGui")
+local gameGui = playerGui:WaitForChild("GameGui")
+local endscreen = gameGui:WaitForChild("EndScreen")
+
+local towersFolder = workspace:WaitForChild("Towers")
+local wave = workspace:WaitForChild("Info"):WaitForChild("Wave")
+
+
+--// End screen retry
+endscreen:GetPropertyChangedSignal("Visible"):Connect(function()
+	if endscreen.Visible then
+		events:WaitForChild("EndDecision"):FireServer(true)
+		print("End screen detected! Fired EndDecision.")
+	end
+end)
+
+
+--// Tower deployment
+local function deploy(towerData)
+	return spawnRemote:InvokeServer(unpack(towerData))
+end
+
+
+--// Tower upgrading
+local function upgrade(towerInstance, variantName)
+	return upgradeRemote:InvokeServer(towerInstance, variantName)
+end
+
+
+--// Freddy tower creator
+local function createFreddy(x)
+	return {
+		"Freddy Trashcan",
+		CFrame.new(x, -93, 38),
+		false,
+		"Freddy Trashcan Rainbow",
+		{"Rainbow"}
+	}
+end
+
+
+--// Tower definitions
+local freddy  = createFreddy(-17)
+local freddy2 = createFreddy(-14)
+local freddy3 = createFreddy(-11)
+local freddy4 = createFreddy(-8)
+
+local aliennub = {
+	"Alien Noob",
+	CFrame.new(16, -94, 61),
+	false,
+	"Alien Noob",
+	{}
+}
+
+local slow = {
+	"Afterwind",
+	CFrame.new(13, -94, 64),
+	false,
+	"Afterwind",
+	{}
+}
+
+local hc = {
+	"Happy Computer",
+	CFrame.new(10, -93, 68),
+	false,
+	"Happy Computer Gold",
+	{"Gold"}
+}
+
+local azure = {
+	"Azure",
+	CFrame.new(9, -93, 67),
+	false,
+	"Azure",
+	{}
+}
+
+local oc = {
+	"Orbital Camera",
+	CFrame.new(11, -93, 82),
+	false,
+	"Orbital Camera",
+	{}
+}
+
+local isaac = {
+	"IsaacE9",
+	CFrame.new(43, -93, -1),
+	false,
+	"IsaacE9",
+	{}
+}
+
+local maxwell = {
+	"Maxwell",
+	CFrame.new(12, -93, 75),
+	false,
+	"Maxwell",
+	{}
+}
+
+local buff = {
+	"Glistening Toilet",
+	CFrame.new(14, -93, 75),
+	false,
+	"Glistening Toilet",
+	{}
+}
+
+local isaac2 = {
+	"IsaacE9",
+	CFrame.new(9, -93, 71),
+	false,
+	"IsaacE9",
+	{}
+}
+
+
+--// Mode voting
+local voteGui = gameGui:WaitForChild("Voting")
+task.wait(3)
+if voteGui.Visible then
+	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
+
+	task.wait(8)
+
+	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
+else
+	task.wait(1)
+end
+
+speedRemote:InvokeServer(5)
+
+
+--// Wave 0
+while wave.Value == 0 do
+	deploy(freddy)
+	task.wait(1)
+end
+
+
+--// Wave 1
+while wave.Value == 1 do
+	deploy(freddy2)
+
+	task.wait(0.5)
+
+	deploy(freddy3)
+
+	task.wait(2)
+end
+
+
+--// Wave 2
+while wave.Value == 2 do
+	deploy(freddy4)
+	task.wait(1)
+    upgrade(freddy)
+      print("upgraded freddy")
+	break
+end
+
+--// Rest of script continues below
