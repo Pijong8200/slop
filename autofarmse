@@ -249,7 +249,7 @@ local isaac2 = {
 
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
-task.wait(3)
+task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
 
@@ -264,41 +264,31 @@ speedRemote:InvokeServer(5)
 
 
 --// Wave 0
-while wave.Value == 0 do
+if wave and wave.Value == 0 then
 	deploy(freddy)
-	task.wait(1)
+else
+print("failed to find wave value, please wait...")
 end
 
 
 --// Wave 1
-while wave.Value == 1 do
+repeat task.wait() until wave.Value == 1
 	deploy(freddy2)
-
 	task.wait(0.5)
-
 	deploy(freddy3)
-
- task.wait(3)
-end
 
 
 --// Wave 2
-while wave.Value == 2 do
+repeat task.wait() until wave.Value == 2
 	deploy(freddy4)
-	task.wait(1)
     upgrade(freddyUpgrades)
       print("upgraded freddies at wave 2")
-task.wait(2)
-end
 
-while wave.Value == 3 do
+repeat task.wait() until wave.Value == 3
 upgrade(freddyUpgrades)
 print("upgraded Freddies at wave 3")
-task.wait(3)
-end
 
-while wave.Value == 6 do
+repeat task.wait() until wave.Value == 6
 deploy(isaac)
 print("placed isaac at wave 6")
-end
 --// Rest of script continues below
