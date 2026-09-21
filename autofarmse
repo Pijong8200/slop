@@ -278,7 +278,7 @@ while wave.Value == 1 do
 
 	deploy(freddy3)
 
- break
+ task.wait(3)
 end
 
 
@@ -294,7 +294,7 @@ end
 while wave.Value == 3 do
 upgrade(freddyUpgrades)
 print("upgraded Freddies at wave 3")
-break
+task.wait(3)
 end
 
 while wave.Value == 6 do
