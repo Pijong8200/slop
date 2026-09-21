@@ -287,8 +287,12 @@ while wave.Value == 2 do
 	deploy(freddy4)
 	task.wait(1)
     upgrade(freddyUpgrades)
-      print("upgraded freddies")
-	break
+      print("upgraded freddies at wave 2")
+end
+
+while wave.Value == 3 do
+upgrade(freddyUpgrades)
+print("upgraded Freddies at wave 3")
 end
 
 --// Rest of script continues below
