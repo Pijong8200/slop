@@ -64,7 +64,7 @@ local functions = ReplicatedStorage:WaitForChild("Functions", 0.1)
 --// Input manager
 local function tapKey(keyCode)
 	VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
-	task.wait(0.2)
+	task.wait(0.3)
 	VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
 end
 
@@ -124,10 +124,30 @@ local function deploy(towerData)
 end
 
 
+
+
+
 --// Tower upgrading
-local function upgrade(towerInstance, variantName)
-	return upgradeRemote:InvokeServer(towerInstance, variantName)
+local function upgrade(towerTable)
+	for _, towerData in ipairs(towerTable) do
+		local towerName = towerData[1]
+		local towerCFrame = towerData[2]
+		local variantName = towerData[4]
+
+		for _, towerInstance in ipairs(towersFolder:GetChildren()) do
+			if towerInstance.Name == towerName then
+				local towerPosition = towerInstance:GetPivot().Position
+				local targetPosition = towerCFrame.Position
+
+				if (towerPosition - targetPosition).Magnitude < 2 then
+					upgradeRemote:InvokeServer(towerInstance, variantName)
+					break
+				end
+			end
+		end
+	end
 end
+
 
 
 --// Freddy tower creator
@@ -141,12 +161,18 @@ local function createFreddy(x)
 	}
 end
 
-
 --// Tower definitions
 local freddy  = createFreddy(-17)
 local freddy2 = createFreddy(-14)
 local freddy3 = createFreddy(-11)
 local freddy4 = createFreddy(-8)
+
+local freddyUpgrades = {
+	freddy,
+	freddy2,
+	freddy3,
+	freddy4
+}
 
 local aliennub = {
 	"Alien Noob",
@@ -260,8 +286,8 @@ end
 while wave.Value == 2 do
 	deploy(freddy4)
 	task.wait(1)
-    upgrade(freddy)
-      print("upgraded freddy")
+    upgrade(freddyUpgrades)
+      print("upgraded freddies")
 	break
 end
 
