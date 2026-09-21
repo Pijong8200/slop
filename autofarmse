@@ -303,16 +303,18 @@ repeat task.wait() until wave.Value == 1
 --// Wave 2
 repeat task.wait() until wave.Value == 2
 	deploy(freddy4)
+ deploy(tungmidas)
+ deploy(tungmidas2)
     upgrade(freddyUpgrades)
       print("upgraded freddies at wave 2")
 
 repeat task.wait() until wave.Value == 3
-upgrade(freddyUpgrades)
-print("upgraded Freddies at wave 3")
+upgrade(upgradeAll)
+print("upgraded all in wave 3")
 
-repeat task.wait() until wave.Value == 4
-deploy(tungmidas)
-deploy(tungmidas2)
-print("placed tungmidas 1 and 2 at wave 4")
+--repeat task.wait() until wave.Value == 4
+--deploy(tungmidas)
+--deploy(tungmidas2)
+--print("placed tungmidas 1 and 2 at wave 4")
 
 --// Rest of script continues below
