@@ -302,7 +302,7 @@ repeat task.wait() until wave.Value == 2
 	deploy(freddy4)
  deploy(tungmidas)
 
-while wave and wave.Value == 2 do
+while wave.Value == 2 do
 task.wait(0.5)
 if cash and cash.Value >= 999 then
 deploy(tungmidas2)
