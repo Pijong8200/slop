@@ -223,6 +223,7 @@ local isaac2 = {
 
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
+task.wait(3)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
 
