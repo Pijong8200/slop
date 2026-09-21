@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.4 loaded.",
+        Text = "Build v1.5 loaded.",
         Duration = 5
     })
 end)
@@ -131,18 +131,38 @@ end
 
 
 local function upgrade(towerTable)
+	local usedTowers = {}
+
 	for _, towerData in ipairs(towerTable) do
 		local towerName = towerData[1]
-		local towerCFrame = towerData[2]
+		local targetPosition = towerData[2].Position
 		local variantName = towerData[4]
 
-		for _, towerInstance in ipairs(towersFolder:GetChildren()) do
-			if towerInstance.Name == towerName then
-				local towerPosition = towerInstance:GetPivot().Position
-				local targetPosition = towerCFrame.Position
+		print("Looking for:", towerName)
+		print("Target position:", targetPosition)
+		print("Upgrade variant:", variantName)
 
-				if (towerPosition - targetPosition).Magnitude < 2 then
-					upgradeRemote:InvokeServer(towerInstance, variantName)
+		for _, towerInstance in ipairs(towersFolder:GetChildren()) do
+			if not usedTowers[towerInstance] and towerInstance.Name == towerName then
+				local towerPosition = towerInstance:GetPivot().Position
+				local distance = (towerPosition - targetPosition).Magnitude
+
+				print(
+					"Found matching name:",
+					towerInstance.Name,
+					"Distance:",
+					distance
+				)
+
+				if distance < 2 then
+					print("UPGRADING:", towerInstance.Name)
+
+					upgradeRemote:InvokeServer(
+						towerInstance,
+						variantName
+					)
+
+					usedTowers[towerInstance] = true
 					break
 				end
 			end
