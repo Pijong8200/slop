@@ -281,6 +281,7 @@ tungmidas2,
 dj,
 alien1x1
 }
+
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
 task.wait(2)
@@ -342,7 +343,10 @@ deploy(dj)
 task.wait(0.5)
 deploy(alien1x1)
 
-repeat upgrade(All) until wave.Value == 41
+repeat
+	upgrade(All)
+	task.wait(1)
+until wave.Value >= 25
 
 --repeat task.wait() until wave.Value == 4
 --deploy(tungmidas)
