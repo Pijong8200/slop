@@ -210,7 +210,7 @@ local azure = {
 
 local oc = {
 	"Orbital Camera",
-	CFrame.new(11, -93, 82),
+	CFrame.new(11, -93, 81),
 	false,
 	"Orbital Camera",
 	{}
@@ -232,9 +232,25 @@ local dj = {
 	{}
 }
 
+local silly = {
+	"51lly N00b :3",
+	CFrame.new(8, -93, 77),
+	false,
+	"51lly n00b :3",
+	{}
+}
+
+local silly2 = {
+	"51lly N00b :3",
+	CFrame.new(12, -93, 77),
+	false,
+	"51lly n00b :3",
+	{}
+}
+
 local tungmidas = {
 	"Tung Tung Midas",
-	CFrame.new(13, -93, 64),
+	CFrame.new(-23, -93, -10),
 	false,
 	"Tung Tung Midas",
 	{}
@@ -252,16 +268,16 @@ local isaac = {
 	"IsaacE9",
 	CFrame.new(9, -93, 75),
 	false,
-	"IsaacE9",
-	{}
+	"IsaacE9 Gold",
+	{"Gold"}
 }
 
 local isaac2 = {
 	"IsaacE9",
 	CFrame.new(12, -93, 75),
 	false,
-	"IsaacE9",
-	{}
+	"IsaacE9 Gold",
+	{"Gold"}
 }
 
 local uts = {
@@ -294,17 +310,14 @@ tungmidas2
 }
 
 local All = {
-freddy,
-freddy2,
-freddy3,
-freddy4,
-isaac,
-isaac2,
 tungmidas,
 tungmidas2,
-dj,
-atvm,
-uts
+isaac,
+isaac2,
+silly,
+silly2,
+oc,
+dj
 }
 
 --// Mode voting
@@ -323,60 +336,34 @@ end
 speedRemote:InvokeServer(5)
 
 
---// Wave 0
-if wave and wave.Value == 0 then
-	deploy(freddy)
-end
-
---// Wave 1
-repeat task.wait() until wave.Value == 1
-	deploy(freddy2)
-	task.wait(0.5)
-	deploy(freddy3)
-
-
---// Wave 2
-repeat task.wait() until wave.Value == 2
-	deploy(freddy4)
- deploy(tungmidas)
-
-while wave.Value == 2 do
-task.wait(0.5)
-if cash and cash.Value >= 999 then
+repeat task.wait() until cash.Value >= 999
+	deploy(tungmidas)
+repeat task.wait() until cash.Value >= 1111
+upgrade(tungmidas)
+repeat task.wait() until cash.Value >= 999
 deploy(tungmidas2)
-end
-end
-
-repeat task.wait() until wave.Value == 3
-task.wait(1)
-upgrade(upgradeAll)
-upgrade(upgradeAll)
-
-repeat task.wait() until wave.Value == 4
-task.wait(0.5)
-upgrade(freddyUpgrades)
-task.wait(1)
-upgrade(freddyUpgrades)
-
-repeat task.wait() until wave.Value == 6
-deploy(isaac)
-task.wait(0.5)
-deploy(isaac2)
-
-repeat task.wait() until cash.Value >= 17500
-deploy(dj)
-task.wait(0.5)
-deploy(uts)
-deploy(uts2)
+repeat task.wait() until cash.Value >= 1111
+upgrade(tungmidas2)
 
 repeat
-	upgrade(All)
-	task.wait(1)
-until wave.Value >= 25
+upgrade(tungmidas)
+task.wait(0.2)
+upgrade(tungmidas2)
+task.wait(1)
+until wave.Value >= 7
 
---repeat task.wait() until wave.Value == 4
---deploy(tungmidas)
---deploy(tungmidas2)
---print("placed tungmidas 1 and 2 at wave 4")
+repeat task.wait() until cash.Value >= 9120
+deploy(isaac)
+repeat task.wait() until cash.Value >= 9120
+deploy(isaac2)
+repeat task.wait() until cash.Value >= 2000
+deploy(dj)
+repeat task.wait() until cash.Value >= 9375
+deploy(silly)
+repeat task.wait() until cash.Value >= 9375
+deploy(silly2)
+repeat task.wait() until cash.Value >= 30000
+deploy(oc)
+repeat upgrade(All) task.wait(1) until wave.Value >= 30
 
 --// Rest of script continues below
