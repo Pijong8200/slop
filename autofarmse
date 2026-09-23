@@ -233,7 +233,7 @@ local dj = {
 }
 
 local silly = {
-	"51lly N00b :3",
+	"51lly n00b :3",
 	CFrame.new(8, -93, 77),
 	false,
 	"51lly n00b :3",
@@ -241,7 +241,7 @@ local silly = {
 }
 
 local silly2 = {
-	"51lly N00b :3",
+	"51lly n00b :3",
 	CFrame.new(12, -93, 77),
 	false,
 	"51lly n00b :3",
