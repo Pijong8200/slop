@@ -304,7 +304,7 @@ false,
 {}
 }
 
-local upgradeAll = {
+local farms = {
 tungmidas,
 tungmidas2
 }
@@ -339,16 +339,16 @@ speedRemote:InvokeServer(5)
 repeat task.wait() until cash.Value >= 999
 	deploy(tungmidas)
 repeat task.wait() until cash.Value >= 1111
-upgrade(tungmidas)
+upgrade({tungmidas})
 repeat task.wait() until cash.Value >= 999
 deploy(tungmidas2)
 repeat task.wait() until cash.Value >= 1111
-upgrade(tungmidas2)
+upgrade({tungmidas2})
 
 repeat
-upgrade(tungmidas)
+upgrade({tungmidas})
 task.wait(0.2)
-upgrade(tungmidas2)
+upgrade({tungmidas2})
 task.wait(1)
 until wave.Value >= 7
 
