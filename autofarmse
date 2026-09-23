@@ -236,16 +236,16 @@ local tungmidas = {
 	"Tung Tung Midas",
 	CFrame.new(13, -93, 64),
 	false,
-	"Tung Tung Midas Gold",
-	{"Gold"}
+	"Tung Tung Midas",
+	{}
 }
 
 local tungmidas2 = {
 	"Tung Tung Midas",
 	CFrame.new(16, -93, 64),
 	false,
-	"Tung Tung Midas Gold",
-	{"Gold"}
+	"Tung Tung Midas",
+	{}
 }
 
 local isaac = {
@@ -264,6 +264,22 @@ local isaac2 = {
 	{}
 }
 
+local uts = {
+"Upgraded Titan Speakerman",
+CFrame.new(17, -93, 75),
+false,
+"Upgraded Titan Speakerman",
+{}
+}
+
+local atvm = {
+"Astronaut TV Man",
+CFrame.new(19, -93, 75),
+false,
+"Astronaut TV Man",
+{}
+}
+
 local upgradeAll = {
 tungmidas,
 tungmidas2
@@ -279,7 +295,8 @@ isaac2,
 tungmidas,
 tungmidas2,
 dj,
-alien1x1
+atvm,
+uts
 }
 
 --// Mode voting
@@ -338,10 +355,10 @@ deploy(isaac)
 task.wait(0.5)
 deploy(isaac2)
 
-repeat task.wait() until cash.Value >= 2000
+repeat task.wait() until cash.Value >= 17500
 deploy(dj)
 task.wait(0.5)
-deploy(alien1x1)
+deploy(utv)
 
 repeat
 	upgrade(All)
