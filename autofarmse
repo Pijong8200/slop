@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2 loaded.",
+        Text = "Build v2.1 loaded.",
         Duration = 5
     })
 end)
@@ -266,10 +266,18 @@ local isaac2 = {
 
 local uts = {
 "Upgraded Titan Speakerman",
-CFrame.new(17, -93, 75),
+CFrame.new(10, -93, 69),
 false,
 "Upgraded Titan Speakerman",
 {}
+}
+
+local uts2 = {
+	"Upgraded Titan Speakerman",
+	CFrame.new(13, -93, 69),
+	false,
+	"Upgraded Titan Speakerman",
+	{}
 }
 
 local atvm = {
@@ -358,7 +366,8 @@ deploy(isaac2)
 repeat task.wait() until cash.Value >= 17500
 deploy(dj)
 task.wait(0.5)
-deploy(utv)
+deploy(uts)
+deploy(uts2)
 
 repeat
 	upgrade(All)
