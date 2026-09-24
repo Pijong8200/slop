@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.5 loaded.",
+        Text = "Build v2.6 loaded.",
         Duration = 5
     })
 end)
@@ -396,7 +396,7 @@ deploy(gt)
 repeat task.wait() until cash.Value >= 30000
 deploy(kn)
 repeat upgrade(All) until wave.Value >= 31
-
+events:WaitForChild("LeaveNote"):FireServer()
 
 
 --// Rest of script continues below
