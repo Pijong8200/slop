@@ -266,7 +266,7 @@ local tungmidas = {
 
 local tungmidas2 = {
 	"Tung Tung Midas",
-	CFrame.new(32, -93, 100),
+	CFrame.new(32, -93, 112),
 	false,
 	"Tung Tung Midas",
 	{}
@@ -383,26 +383,20 @@ repeat task.wait() until cash.Value >= 999
 deploy(tungmidas2)
 repeat task.wait() until cash.Value >= 1111
 upgrade({tungmidas2})
+repeat upgrade({tungmidas2}) until wave.Value >= 6
 
-repeat
-upgrade({tungmidas})
-task.wait(0.2)
-upgrade({tungmidas2})
-task.wait(1)
-until wave.Value >= 7
-
-repeat task.wait() until cash.Value >= 9120
-deploy(isaac)
-repeat task.wait() until cash.Value >= 9120
-deploy(isaac2)
+repeat task.wait() until cash.Value >= 30000
+deploy(bacteria)
+repeat task.wait() until cash.Value >= 7250
+deploy(flower)
 repeat task.wait() until cash.Value >= 2000
 deploy(dj)
-repeat task.wait() until cash.Value >= 17500
-deploy(star)
+repeat task.wait() until cash.Value >= 300
+deploy(gt)
 repeat task.wait() until cash.Value >= 30000
-deploy(oc)
-repeat upgrade(All) task.wait(1) until wave.Value >= 20
-repeat task.wait() until wave.Value >= 21
+deploy(kn)
+repeat upgrade(All) until wave.Value >= 31
+
 
 
 --// Rest of script continues below
