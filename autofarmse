@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.4 loaded.",
+        Text = "Build v2.5 loaded.",
         Duration = 5
     })
 end)
@@ -226,10 +226,18 @@ local alien1x1 = {
 
 local dj = {
 	"DJ Toilet",
-	CFrame.new(14, -93, 75),
+	CFrame.new(37, -93, 101),
 	false,
 	"DJ Toilet",
 	{}
+}
+
+local gt = {
+"Glistening Toilet",
+CFrame.new(19, -93, 67),
+false,
+"Glistening Toilet",
+{}
 }
 
 local silly = {
@@ -258,7 +266,7 @@ local tungmidas = {
 
 local tungmidas2 = {
 	"Tung Tung Midas",
-	CFrame.new(16, -93, 64),
+	CFrame.new(32, -93, 100),
 	false,
 	"Tung Tung Midas",
 	{}
@@ -310,6 +318,30 @@ CFrame.new(19, -93, 67),
 false,
 "Star Fruit Rainbow",
 {"Rainbow"}
+}
+
+local bacteria = {
+"Bacteria",
+CFrame.new(19, -93, 67),
+false,
+"Bacteria Rainbow",
+{"Rainbow"}
+}
+
+local flower = {
+"Flowergirl Afterwind",
+CFrame.new(32, -93, 117),
+false,
+"Flowergirl Afterwind",
+{"Rainbow"}
+}
+
+local kn = {
+"King Noobini",
+CFrame.new(32, -93, 109),
+false,
+"King Noobini",
+{}
 }
 
 local farms = {
@@ -369,6 +401,8 @@ repeat task.wait() until cash.Value >= 17500
 deploy(star)
 repeat task.wait() until cash.Value >= 30000
 deploy(oc)
-repeat upgrade(All) task.wait(1) until wave.Value >= 30
+repeat upgrade(All) task.wait(1) until wave.Value >= 20
+repeat task.wait() until wave.Value >= 21
+
 
 --// Rest of script continues below
