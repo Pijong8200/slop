@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.6 loaded.",
+        Text = "Build v2.7 loaded.",
         Duration = 5
     })
 end)
@@ -234,7 +234,7 @@ local dj = {
 
 local gt = {
 "Glistening Toilet",
-CFrame.new(19, -93, 67),
+CFrame.new(37, -93, 107),
 false,
 "Glistening Toilet",
 {}
@@ -322,7 +322,7 @@ false,
 
 local bacteria = {
 "Bacteria",
-CFrame.new(19, -93, 67),
+CFrame.new(32, -93, 98),
 false,
 "Bacteria Rainbow",
 {"Rainbow"}
@@ -352,10 +352,10 @@ tungmidas2
 local All = {
 tungmidas,
 tungmidas2,
-isaac,
-isaac2,
-star,
-oc,
+flower,
+bacteria,
+kn,
+gt,
 dj
 }
 
