@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.1 loaded.",
+        Text = "Build v3.2b loaded.",
         Duration = 5
     })
 end)
@@ -286,8 +286,9 @@ if voteGui.Visible then
 
 	task.wait(8)
 	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
+task.wait(6)
 else
-	task.wait(5)
+	task.wait(3)
 speedRemote:InvokeServer(5)
 end
 
