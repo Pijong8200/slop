@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.2b loaded.",
+        Text = "Build v3.3b loaded.",
         Duration = 5
     })
 end)
@@ -286,55 +286,12 @@ if voteGui.Visible then
 
 	task.wait(8)
 	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
-task.wait(6)
 else
-	task.wait(3)
+	task.wait(1)
 speedRemote:InvokeServer(5)
 end
 
 -- // mutator selector
-local function getPriority(text)
-	if text == "2x Cash" then
-		return math.huge
-	end
-    
-	local percent = tonumber(string.match(text, "(%d+)%%"))
-
-	return percent
-end
-
-
-local function selectBest(buttons)
-	local bestButton = nil
-	local bestPriority = -math.huge
-
-	for _, button in ipairs(buttons) do
-		local text = button.TextLabel.Text
-		local priority = getPriority(text)
-
-		if priority and priority > bestPriority then
-			bestPriority = priority
-			bestButton = button
-		end
-	end
-
-	return bestButton
-  end
-
-local frame = playerGui:WaitForChild("SlopMutatorGui").MutatorVoting
-local buttons = {
-	frame.TextButton1,
-	frame.TextButton2,
-	frame.TextButton3,
-	frame.TextButton4
-}
-
-local selected = selectBest(buttons)
-
-if selected then
-	selected:Activate()
-end
-
 
 -- // placement sequence
 repeat task.wait() until cash.Value >= 999
