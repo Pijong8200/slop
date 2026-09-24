@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.3 loaded.",
+        Text = "Build v2.4 loaded.",
         Duration = 5
     })
 end)
@@ -304,6 +304,14 @@ false,
 {}
 }
 
+local star = {
+"Star Fruit",
+CFrame.new(19, -93, 67),
+false,
+"Star Fruit Rainbow",
+{"Rainbow"}
+}
+
 local farms = {
 tungmidas,
 tungmidas2
@@ -314,8 +322,7 @@ tungmidas,
 tungmidas2,
 isaac,
 isaac2,
-silly,
-silly2,
+star,
 oc,
 dj
 }
@@ -358,10 +365,8 @@ repeat task.wait() until cash.Value >= 9120
 deploy(isaac2)
 repeat task.wait() until cash.Value >= 2000
 deploy(dj)
-repeat task.wait() until cash.Value >= 9375
-deploy(silly)
-repeat task.wait() until cash.Value >= 9375
-deploy(silly2)
+repeat task.wait() until cash.Value >= 17500
+deploy(star)
 repeat task.wait() until cash.Value >= 30000
 deploy(oc)
 repeat upgrade(All) task.wait(1) until wave.Value >= 30
