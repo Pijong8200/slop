@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.3b loaded.",
+        Text = "Build v3.4b loaded.",
         Duration = 5
     })
 end)
@@ -285,10 +285,9 @@ if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
 
 	task.wait(8)
-	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
+speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
 else
 	task.wait(1)
-speedRemote:InvokeServer(5)
 end
 
 -- // mutator selector
