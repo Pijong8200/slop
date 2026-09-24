@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.7 loaded.",
+        Text = "Build v2.8 loaded.",
         Duration = 5
     })
 end)
@@ -384,7 +384,6 @@ deploy(tungmidas2)
 repeat task.wait() until cash.Value >= 1111
 upgrade({tungmidas2})
 repeat upgrade({tungmidas2}) until wave.Value >= 6
-
 repeat task.wait() until cash.Value >= 30000
 deploy(bacteria)
 repeat task.wait() until cash.Value >= 7250
@@ -395,8 +394,9 @@ repeat task.wait() until cash.Value >= 300
 deploy(gt)
 repeat task.wait() until cash.Value >= 30000
 deploy(kn)
+events:WaitForChild("AbilityAuto"):FireServer("Pizza Saws", true)
 repeat upgrade(All) until wave.Value >= 31
-events:WaitForChild("LeaveNote"):FireServer()
+events:WaitForChild("LeaveVote"):FireServer()
 
 
 --// Rest of script continues below
