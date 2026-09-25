@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.5b loaded.",
+        Text = "Build v3.6b loaded.",
         Duration = 5
     })
 end)
@@ -78,6 +78,9 @@ local speedRemote = functions:WaitForChild("ChangeSpeed")
 local upgradeRemote = functions:WaitForChild("UpgradeTower")
 
 local playerGui = player:WaitForChild("PlayerGui")
+
+playerGui.ScreenOrientation = Enum.ScreenOrientation.LandscapeSensor
+
 local gameGui = playerGui:WaitForChild("GameGui")
 local endscreen = gameGui:WaitForChild("EndScreen")
 
