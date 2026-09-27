@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v4.2 loaded.",
+        Text = "Build v4.3 loaded.",
         Duration = 5
     })
 end)
@@ -155,12 +155,12 @@ end
 -- // mutator solver
 local priority = {
 "Speedrun",
-"Armored Slop",
+"ArmoredSlop",
 "Gigantism",
-"Boss Rush",
-"Brainrot",
+"BossRush",
+"Blackout",
 "Regeneration",
-"Blackout"}
+"Brainrot"}
 
 local function search()
 local found = {}
@@ -360,7 +360,6 @@ end
 speedRemote:InvokeServer(5)
 -- // mutator selector
 repeat task.wait() until buttons.Visible
-task.wait(1)
 call()
 -- // placement sequence
 repeat task.wait() until cash.Value >= 999
