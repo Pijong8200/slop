@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.9 loaded.",
+        Text = "Build v4 loaded.",
         Duration = 5
     })
 end)
@@ -83,6 +83,29 @@ playerGui.ScreenOrientation = Enum.ScreenOrientation.LandscapeSensor
 local buttons = playerGui:WaitForChild("SlopMutatorGui").MutatorVoting
 local gameGui = playerGui:WaitForChild("GameGui")
 local endscreen = gameGui:WaitForChild("EndScreen")
+
+-- timer
+local targetFrame = endscreen
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TimerGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "TimerLabel"
+textLabel.Size = UDim2.fromOffset(150, 50)
+textLabel.Position = UDim2.new(0, 10, 1, -60)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = "0"
+textLabel.TextSize = 32
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.FontFace = Font.new("rbxasset://fonts/families/ComicNeueAngular.json")
+textLabel.Parent = screenGui
+local startTime = tick()
+while not targetFrame.Visible do
+    local elapsed = math.floor(tick() - startTime)
+    textLabel.Text = tostring(elapsed)
+    task.wait(0.1)
+end
 
 local towersFolder = workspace:WaitForChild("Towers")
 local wave = workspace:WaitForChild("Info"):WaitForChild("Wave")
