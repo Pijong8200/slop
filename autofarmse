@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v4.4 Chaos loaded.",
+        Text = "Build v4.5 Chaos loaded.",
         Duration = 5
     })
 end)
@@ -404,7 +404,7 @@ task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
 task.wait(8)
-speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Chaor")
+speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Chaos")
 else
 	task.wait(1)
 speedRemote:InvokeServer(5)
