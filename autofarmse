@@ -423,7 +423,7 @@ deploy(at3)
 repeat task.wait() until cash.Value >= 500
 upgrade(All)
 repeat task.wait() until cash.Value >= 6666
-deploy(cruelty)
+deploy(cruel)
 repeat upgrade(All) until cash.Value >= 1500
 deploy(gs)
 repeat task.wait() until cash.Value >= 7350
