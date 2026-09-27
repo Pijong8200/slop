@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.8 loaded.",
+        Text = "Build v3.9 loaded.",
         Duration = 5
     })
 end)
@@ -329,7 +329,7 @@ speedRemote:InvokeServer(5)
 end
 speedRemote:InvokeServer(5)
 -- // mutator selector
-repeat task.wait() until buttons.parent.Visible
+repeat task.wait() until buttons.Visible
 call()
 -- // placement sequence
 repeat task.wait() until cash.Value >= 999
