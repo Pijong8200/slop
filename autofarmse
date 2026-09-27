@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v4.3 loaded.",
+        Text = "Build v4.4 Chaos loaded.",
         Duration = 5
     })
 end)
@@ -317,10 +317,10 @@ false,
 
 local flower = {
 "Flowergirl Afterwind",
-CFrame.new(32, -93, 117),
+CFrame.new(10, -93, 69),
 false,
-"Flowergirl Afterwind",
-{"Rainbow"}
+"Flowergirl Afterwind Gold",
+{"Gold"}
 }
 
 local kn = {
@@ -331,19 +331,71 @@ false,
 {}
 }
 
-local farms = {
-tungmidas,
-tungmidas2
+local at = {
+"Alien Toilet",
+CFrame.new(15, -93, 62),
+false,
+"Alien Toilet Gold",
+{"Gold"}
+}
+
+local at2 = {
+"Alien Toilet",
+CFrame.new(17, -93, 62),
+false,
+"Alien Toilet Gold",
+{"Gold"}
+}
+
+local at3 = {
+"Alien Toilet",
+CFrame.new(19, -93, 62),
+false,
+"Alien Toilet Gold",
+{"Gold"}
+}
+
+local wod = {
+"The Watchman Of Doom",
+CFrame.new(19, -93, 80),
+false,
+"The Watchman Of Doom",
+{}
+}
+
+local lv = {
+"Lord Verity",
+CFrame.new(19, -93, 76),
+false,
+"Lord Verity",
+{}
+}
+
+local cruel = {
+"Cruelty",
+CFrame.new(11, -93, 80),
+false,
+"Cruelty",
+{}
+}
+
+local gs = {
+"Godly Sprinkler",
+CFrame.new(14, -93, 69),
+false,
+"Godly Sprinkler Gold",
+{"Gold"}
 }
 
 local All = {
-tungmidas,
-tungmidas2,
+at,
+at2,
+at3,
+wod,
+gs,
 flower,
-bacteria,
-kn,
-gt,
-dj
+cruel,
+lv
 }
 
 --// Mode voting
@@ -352,37 +404,33 @@ task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
 task.wait(8)
-speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
+speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Chaor")
 else
 	task.wait(1)
 speedRemote:InvokeServer(5)
 end
 speedRemote:InvokeServer(5)
 -- // mutator selector
-repeat task.wait() until buttons.Visible
-call()
+-- repeat task.wait() until buttons.Visible
+-- call()
 -- // placement sequence
-repeat task.wait() until cash.Value >= 999
-	deploy(tungmidas)
-repeat task.wait() until cash.Value >= 1111
-upgrade({tungmidas})
-repeat task.wait() until cash.Value >= 999
-deploy(tungmidas2)
-repeat task.wait() until cash.Value >= 1111
-upgrade({tungmidas2})
-repeat upgrade({tungmidas2}) until wave.Value >= 6
-repeat task.wait() until cash.Value >= 30000
-deploy(kn)
-events:WaitForChild("AbilityAuto"):FireServer("Pizza Saws", true)
-repeat task.wait() until cash.Value >= 7250
+repeat task.wait() until cash.Value >= 345
+	deploy(at)
+repeat task.wait() until cash.Value >= 345
+ deploy(at2)
+repeat task.wait() until cash.Value >= 345
+deploy(at3)
+repeat task.wait() until cash.Value >= 500
+upgrade(All)
+repeat task.wait() until cash.Value >= 6666
+deploy(cruelty)
+repeat upgrade(All) until cash.Value >= 1500
+deploy(gs)
+repeat task.wait() until cash.Value >= 7350
 deploy(flower)
-repeat task.wait() until cash.Value >= 2000
-deploy(dj)
-repeat task.wait() until cash.Value >= 300
-deploy(gt)
-repeat task.wait() until cash.Value >= 30000
-deploy(bacteria)
-repeat upgrade(All) until wave.Value >= 31
+repeat upgrade(All) until cash.Value >= 100000
+deploy(wod)
+repeat upgrade(All) until wave.Value >= 41
 events:WaitForChild("LeaveVote"):FireServer()
 
 -- // end of the script
