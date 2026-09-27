@@ -430,7 +430,8 @@ repeat task.wait() until cash.Value >= 7350
 deploy(flower)
 repeat upgrade(All) until cash.Value >= 100000
 deploy(wod)
-events:WaitForChild("AutoAbility"):FireServer("Core Blast", true)
+task.wait(0.5)
+events:WaitForChild("AbilityAuto"):FireServer("Core Blast", true)
 repeat upgrade(All) until cash.Value >= 175000
 deploy(lv)
 repeat upgrade(All) until wave.Value >= 41
