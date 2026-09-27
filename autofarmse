@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v4.8 Chaos loaded.",
+        Text = "Build v4.9 Chaos loaded.",
         Duration = 5
     })
 end)
@@ -434,7 +434,7 @@ task.wait(0.5)
 events:WaitForChild("AbilityAuto"):FireServer("Core Blast", true)
 repeat upgrade(All) until cash.Value >= 175000
 deploy(lv)
-repeat upgrade(All) until wave.Value >= 41
+repeat upgrade(All) until wave.Value >= 31
 events:WaitForChild("LeaveVote"):FireServer()
 
 -- // end of the script
