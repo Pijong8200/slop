@@ -86,10 +86,12 @@ local endscreen = gameGui:WaitForChild("EndScreen")
 
 -- timer
 local targetFrame = endscreen
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TimerGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
+
 local textLabel = Instance.new("TextLabel")
 textLabel.Name = "TimerLabel"
 textLabel.Size = UDim2.fromOffset(150, 50)
@@ -100,12 +102,17 @@ textLabel.TextSize = 32
 textLabel.TextColor3 = Color3.new(1, 1, 1)
 textLabel.FontFace = Font.new("rbxasset://fonts/families/ComicNeueAngular.json")
 textLabel.Parent = screenGui
-local startTime = tick()
-while not targetFrame.Visible do
-    local elapsed = math.floor(tick() - startTime)
-    textLabel.Text = tostring(elapsed)
-    task.wait(0.1)
-end
+
+task.spawn(function()
+    local startTime = os.clock()
+
+    while not targetFrame.Visible do
+        local elapsed = math.floor(os.clock() - startTime)
+        textLabel.Text = tostring(elapsed)
+
+        task.wait(0.1)
+    end
+end)
 
 local towersFolder = workspace:WaitForChild("Towers")
 local wave = workspace:WaitForChild("Info"):WaitForChild("Wave")
