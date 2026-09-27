@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.6b loaded.",
+        Text = "Build v3.7 loaded.",
         Duration = 5
     })
 end)
@@ -71,8 +71,8 @@ else
 end
 
 --// Match variables
+local mutatorEvent = events:WaitForChild("SlopMutator")
 local cash = player:WaitForChild("Cash")
-
 local spawnRemote = functions:WaitForChild("SpawnTower")
 local speedRemote = functions:WaitForChild("ChangeSpeed")
 local upgradeRemote = functions:WaitForChild("UpgradeTower")
@@ -80,7 +80,7 @@ local upgradeRemote = functions:WaitForChild("UpgradeTower")
 local playerGui = player:WaitForChild("PlayerGui")
 
 playerGui.ScreenOrientation = Enum.ScreenOrientation.LandscapeSensor
-
+local buttons = playerGui:WaitForChild("SlopMutatorGui").MutatorVoting
 local gameGui = playerGui:WaitForChild("GameGui")
 local endscreen = gameGui:WaitForChild("EndScreen")
 
@@ -120,6 +120,41 @@ local function upgrade(towerTable)
 			end
 		end
 	end
+end
+
+-- // mutator solver
+local priority = {
+"Speedrun",
+"Armored Slop",
+"Gigantism",
+"Boss Rush",
+"Brainrot",
+"Regeneration",
+"Blackout"}
+
+local function search()
+local found = {}
+for i, button in ipairs(buttons:GetChildren()) do
+if i >= 2 and i <= 4 then
+table.insert(found, button)
+end
+end
+return found
+end
+
+local function call()
+local foundButtons = search()
+for _, n in ipairs(priority) do
+for _, v in ipairs(foundButtons) do
+if v.Name == n then
+mutatorEvent:FireServer(
+    "Vote",
+    v.Name
+)
+return
+end
+end
+end
 end
 
 local aliennub = {
@@ -286,8 +321,7 @@ local voteGui = gameGui:WaitForChild("Voting")
 task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
-
-	task.wait(8)
+task.wait(8)
 speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
 else
 	task.wait(1)
@@ -295,7 +329,7 @@ speedRemote:InvokeServer(5)
 end
 speedRemote:InvokeServer(5)
 -- // mutator selector
-
+call()
 -- // placement sequence
 repeat task.wait() until cash.Value >= 999
 	deploy(tungmidas)
