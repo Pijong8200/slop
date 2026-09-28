@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v4.9 Chaos loaded.",
+        Text = "Build v5 Chaos loaded.",
         Duration = 5
     })
 end)
@@ -383,8 +383,8 @@ local gs = {
 "Godly Sprinkler",
 CFrame.new(14, -93, 69),
 false,
-"Godly Sprinkler Gold",
-{"Gold"}
+"Godly Sprinkler Rainbow",
+{"Rainbow"}
 }
 
 local All = {
