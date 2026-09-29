@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.3 Raid Hard loaded.",
+        Text = "Build v5.5 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -277,7 +277,7 @@ false,
 
 local at2 = {
 "Alien Toilet",
-CFrame.new(12, -49, 56),
+CFrame.new(9, -49, 57),
 false,
 "Alien Toilet Gold",
 {"Gold"}
@@ -363,17 +363,21 @@ repeat task.wait() until cash.Value >= 500
 upgrade(All)
 repeat task.wait() until cash.Value >= 800
 deploy(an)
-repeat task.wait() until cash.Value >= 800
+repeat upgrade(All) until cash.Value >= 800
 deploy(an2)
 repeat upgrade(All) until cash.Value >= 1500
 deploy(gs)
-repeat task.wait() until cash.Value >= 7350
+repeat upgrade(All) until cash.Value >= 7350
 deploy(fg)
 repeat upgrade(All) until cash.Value >= 100000
 deploy(wod)
 task.wait(0.5)
 events:WaitForChild("AbilityAuto"):FireServer("Core Blast", true)
-repeat task.wait() until cash.Value >= 199999
+repeat task.wait() until cash.Value >= 7350
+deploy(fg2)
+repeat task.wait() until cash.Value >= 7350
+deploy(fg3)
+repeat upgrade(All) until cash.Value >= 199999
 deploy(garg)
 repeat upgrade(All) until wave.Value >= 40
 
