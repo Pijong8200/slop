@@ -285,7 +285,7 @@ false,
 
 local at3 = {
 "Alien Toilet",
-CFrame.new(8, -49, 63),
+CFrame.new(8, -49, 58),
 false,
 "Alien Toilet Gold",
 {"Gold"}
