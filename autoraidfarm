@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.6 Raid Easy loaded.",
+        Text = "Build v5.7 Raid Easy loaded.",
         Duration = 5
     })
 end)
@@ -359,13 +359,11 @@ repeat task.wait() until cash.Value >= 345
  deploy(at2)
 repeat task.wait() until cash.Value >= 345
 deploy(at3)
-repeat task.wait() until cash.Value >= 500
-upgrade(All)
 repeat task.wait() until cash.Value >= 800
 deploy(an)
-repeat upgrade(All) until cash.Value >= 800
+repeat task.wait() until cash.Value >= 800
 deploy(an2)
-repeat upgrade(All) until cash.Value >= 1500
+repeat task.wait() until cash.Value >= 1500
 deploy(gs)
 repeat upgrade(All) until cash.Value >= 7350
 deploy(fg)
