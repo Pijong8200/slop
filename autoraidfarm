@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.1 Raid Nightmare loaded.",
+        Text = "Build v5.2 Raid Nightmare loaded.",
         Duration = 5
     })
 end)
@@ -191,7 +191,7 @@ end
 
 -- // mutator solver
 local priority = {
-"No Mutator"}
+"None"}
 
 local function search()
 local found = {}
