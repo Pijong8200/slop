@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.2 Raid Hard loaded.",
+        Text = "Build v5.3 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -269,7 +269,7 @@ false,
   
 local at = {
 "Alien Toilet",
-CFrame.new(-1, -49, 53),
+CFrame.new(-2, -49, 41),
 false,
 "Alien Toilet Gold",
 {"Gold"}
