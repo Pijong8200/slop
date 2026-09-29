@@ -15,19 +15,64 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5 Chaos loaded.",
+        Text = "Build v5.1 Chaos loaded.",
         Duration = 5
     })
 end)
+
+
+
+
+-- 1. Setup the Teleport Queue
 
 local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
 if queue then
     queue([[
         repeat task.wait() until game:IsLoaded()
-        local cacheBuster = "?t=" .. tostring(math.random(1, 100000))
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse" .. cacheBuster))()
+        
+        if isfile and isfile("cancel_queue.txt") then
+            delfile("cancel_queue.txt") -- Delete it so it works next time
+            return -- Stop execution completely
+        end
+
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse"))()
     ]])
 end
+
+-- 2. Create the Tiny Kill Switch Button
+local CoreGui = game:GetService("CoreGui")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "QueueKillSwitch"
+screenGui.Parent = CoreGui
+
+local killButton = Instance.new("TextButton")
+killButton.Size = UDim2.new(0, 60, 0, 25) -- Small width and height
+killButton.Position = UDim2.new(1, -70, 0, 10) -- Top right corner (with a 10px offset)
+killButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Dark Red
+killButton.Text = "Kill Queue"
+killButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+killButton.Font = Enum.Font.SourceSansBold
+killButton.TextSize = 12
+killButton.Parent = screenGui
+
+-- Make the button look slightly rounded
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 4)
+uiCorner.Parent = killButton
+
+-- Button Functionality
+killButton.MouseButton1Click:Connect(function()
+    if writefile then
+        writefile("cancel_queue.txt", "true")
+        killButton.Text = "KILLED!"
+        killButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Turn gray to show it worked
+        killButton.Active = false
+    end
+end)
+
+
+
+
 
 
 --// Script start
