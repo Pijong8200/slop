@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.6 Raid Hard loaded.",
+        Text = "Build v5.6 Raid Easy loaded.",
         Duration = 5
     })
 end)
@@ -343,7 +343,7 @@ task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("Raid")
 task.wait(8)
-speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Hard")
+speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Normal")
 else
 	task.wait(1)
 speedRemote:InvokeServer(5)
