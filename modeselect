@@ -1,27 +1,13 @@
-local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
-if queue then
-    queue([[
-        repeat task.wait() until game:IsLoaded()
-        
-        if isfile and isfile("run_script_A.txt") then
-            delfile("run_script_A.txt")
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autoraidfarm"))()
-            
-        elseif isfile and isfile("run_script_B.txt") then
-            delfile("run_script_B.txt")
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse"))()
-        end
-    ]])
-end
-
+-- Create the Selection UI Menu
 local CoreGui = game:GetService("CoreGui")
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "QueueSelectorMenu"
+screenGui.Name = "InstantScriptRunner"
 screenGui.Parent = CoreGui
 
+-- Main Container Frame
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 160, 0, 75)
-frame.Position = UDim2.new(1, -170, 0, 10)
+frame.Position = UDim2.new(1, -170, 0, 10) -- Top right corner
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
@@ -30,6 +16,7 @@ local uiCornerFrame = Instance.new("UICorner")
 uiCornerFrame.CornerRadius = UDim.new(0, 6)
 uiCornerFrame.Parent = frame
 
+-- Helper function to quickly make styled buttons
 local function createButton(name, text, color, yPosition)
     local btn = Instance.new("TextButton")
     btn.Name = name
@@ -49,30 +36,18 @@ local function createButton(name, text, color, yPosition)
     return btn
 end
 
-local btnA = createButton("BtnA", "Queue Script A", Color3.fromRGB(50, 120, 200), 10)   -- Blue Button
-local btnB = createButton("BtnB", "Queue Script B", Color3.fromRGB(50, 160, 100), 40)   -- Green Button
+-- Labeled buttons for Raid and Endless modes
+local btnRaid = createButton("BtnRaid", "Run Raid", Color3.fromRGB(200, 60, 60), 10)       -- Red Button
+local btnEndless = createButton("BtnEndless", "Run Endless", Color3.fromRGB(50, 140, 200), 40) -- Blue Button
 
-local function clearChoices()
-    if delfile then
-        pcall(function() delfile("run_script_A.txt") end)
-        pcall(function() delfile("run_script_B.txt") end)
-    end
-end
-
-btnA.MouseButton1Click:Connect(function()
-    if writefile then
-        clearChoices()
-        writefile("run_script_A.txt", "true")
-        btnA.Text = "Script A Queued!"
-        btnB.Text = "Queue Script B"
-    end
+-- Button Functionality (Runs instantly and closes the menu)
+btnRaid.MouseButton1Click:Connect(function()
+    screenGui:Destroy() -- Removes the menu so it doesn't clutter your screen
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autoraidfarm"))()
 end)
 
-btnB.MouseButton1Click:Connect(function()
-    if writefile then
-        clearChoices()
-        writefile("run_script_B.txt", "true")
-        btnB.Text = "Script B Queued!"
-        btnA.Text = "Queue Script A"
-    end
+btnEndless.MouseButton1Click:Connect(function()
+    screenGui:Destroy() -- Removes the menu so it doesn't clutter your screen
+    -- CHANGE THIS to your actual Endless script GitHub link!
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse"))()
 end)
