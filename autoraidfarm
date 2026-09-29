@@ -1,0 +1,380 @@
+-- // waiting for game to load
+repeat task.wait() until game:IsLoaded()
+
+local vim = game:GetService("VirtualInputManager")
+while not vim do
+    task.wait(0.5)
+    vim = game:GetService("VirtualInputManager")
+end
+
+local starterGui = game:GetService("StarterGui")
+while not starterGui do
+    task.wait(0.5)
+    starterGui = game:GetService("StarterGui")
+end
+
+pcall(function()
+    starterGui:SetCore("SendNotification", {
+        Title = "Success!",
+        Text = "Build v5.1 Raid Nightmare loaded.",
+        Duration = 5
+    })
+end)
+
+-- \\ 
+
+-- // queuing up for next session
+local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
+if queue then
+    queue([[
+        repeat task.wait() until game:IsLoaded()
+        
+        if isfile and isfile("cancel_queue.txt") then
+            delfile("cancel_queue.txt")
+            return
+        end
+
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autoraidfarm"))()
+    ]])
+end
+
+local CoreGui = game:GetService("CoreGui")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "QueueKillSwitch"
+screenGui.Parent = CoreGui
+
+local killButton = Instance.new("TextButton")
+killButton.Size = UDim2.new(0, 60, 0, 25)
+killButton.Position = UDim2.new(1, -70, 0, 10)
+killButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+killButton.Text = "Kill Queue"
+killButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+killButton.Font = Enum.Font.SourceSansBold
+killButton.TextSize = 12
+killButton.Parent = screenGui
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 4)
+uiCorner.Parent = killButton
+
+killButton.MouseButton1Click:Connect(function()
+    if writefile then
+        writefile("cancel_queue.txt", "true")
+        killButton.Text = "KILLED!"
+        killButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        killButton.Active = false
+    end
+end)
+-- \\
+
+--// Script start
+
+
+--// Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Players = game:GetService("Players")
+
+--// Player variables
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+
+--// Lobby variables
+local events = ReplicatedStorage:WaitForChild("Events")
+local functions = ReplicatedStorage:WaitForChild("Functions", 0.1)
+
+--// Input manager
+local function tapKey(keyCode)
+	VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
+	task.wait(0.3)
+	VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
+end
+
+--// Match detector / lobby handling
+if not functions then
+	print("Not in match")
+	char:PivotTo(CFrame.new(-9, 61, 102))
+	tapKey(Enum.KeyCode.W)
+	tapKey(Enum.KeyCode.A)
+	tapKey(Enum.KeyCode.S)
+	tapKey(Enum.KeyCode.D)
+	task.wait(1)
+	events:WaitForChild("StartElevator"):FireServer("Elevator6")
+	print("Attempted to teleport")
+	task.wait(3)
+	return
+else
+	print("In game")
+end
+
+--// Match variables
+local mutatorEvent = events:WaitForChild("SlopMutator")
+local cash = player:WaitForChild("Cash")
+local spawnRemote = functions:WaitForChild("SpawnTower")
+local speedRemote = functions:WaitForChild("ChangeSpeed")
+local upgradeRemote = functions:WaitForChild("UpgradeTower")
+
+local playerGui = player:WaitForChild("PlayerGui")
+
+playerGui.ScreenOrientation = Enum.ScreenOrientation.LandscapeSensor
+local buttons = playerGui:WaitForChild("SlopMutatorGui").MutatorVoting
+local gameGui = playerGui:WaitForChild("GameGui")
+local endscreen = gameGui:WaitForChild("EndScreen")
+
+-- timer
+local targetFrame = endscreen
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TimerGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "TimerLabel"
+textLabel.Size = UDim2.fromOffset(150, 50)
+textLabel.Position = UDim2.new(0, 10, 1, -60)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = "0"
+textLabel.TextSize = 32
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.FontFace = Font.new("rbxasset://fonts/families/ComicNeueAngular.json")
+textLabel.Parent = screenGui
+
+task.spawn(function()
+    local startTime = os.clock()
+
+    while not targetFrame.Visible do
+        local elapsed = math.floor(os.clock() - startTime)
+        textLabel.Text = tostring(elapsed)
+
+        task.wait(0.1)
+    end
+end)
+
+local towersFolder = workspace:WaitForChild("Towers")
+local wave = workspace:WaitForChild("Info"):WaitForChild("Wave")
+
+--// End screen retry
+endscreen:GetPropertyChangedSignal("Visible"):Connect(function()
+	if endscreen.Visible then
+		events:WaitForChild("EndDecision"):FireServer(true)
+		print("End screen detected! Fired EndDecision.")
+	end
+end)
+
+--// Tower deployment
+local function deploy(towerData)
+	return spawnRemote:InvokeServer(unpack(towerData))
+end
+
+--// Tower upgrading
+
+local function upgrade(towerTable)
+	for _, towerData in ipairs(towerTable) do
+		local towerName = towerData[1]
+		local towerCFrame = towerData[2]
+		local variantName = towerData[4]
+
+		for _, towerInstance in ipairs(towersFolder:GetChildren()) do
+			if towerInstance.Name == towerName then
+				local towerPosition = towerInstance:GetPivot().Position
+				local targetPosition = towerCFrame.Position
+
+				if (towerPosition - targetPosition).Magnitude < 2 then
+					upgradeRemote:InvokeServer(towerInstance, variantName)
+					break
+				end
+			end
+		end
+	end
+end
+
+-- // mutator solver
+local priority = {
+"No Mutator"}
+
+local function search()
+local found = {}
+for i, button in ipairs(buttons:GetChildren()) do
+if i > 4 then
+table.insert(found, button)
+end
+end
+return found
+end
+
+local function call()
+local foundButtons = search()
+for _, n in ipairs(priority) do
+for _, v in ipairs(foundButtons) do
+if v.Name == n then
+mutatorEvent:FireServer(
+    "Vote",
+    v.Name
+)
+return
+end
+end
+end
+end
+
+local an = {
+	"Alien Noob",
+	CFrame.new(8, -49, 55),
+	false,
+	"Alien Noob Gold",
+	{"Gold"}
+}
+
+local an2 = {
+	"Alien Noob",
+	CFrame.new(10, -49, 53),
+	false,
+	"Alien Noob Gold",
+	{"Gold"}
+}
+
+
+local garg = {
+	"Gargantuan Cyborg Cat",
+	CFrame.new(-1, -49, 28),
+	false,
+	"Gargantuan Cyborg Cat",
+	{}
+}
+
+local fg = {
+"Flowergirl Afterwind",
+CFrame.new(10, -49, 49),
+false,
+"Flowergirl Afterwind Gold",
+{"Gold"}
+  }
+
+local fg2 = {
+"Flowergirl Afterwind",
+CFrame.new(-10, -49, -1),
+false,
+"Flowergirl Afterwind Gold",
+{"Gold"}
+}
+
+local fg3 = {
+"Flowergirl Afterwind",
+CFrame.new(46, -49, 40),
+false,
+"Flowergirl Afterwind Gold",
+{"Gold"}
+  }
+  
+local at = {
+"Alien Toilet",
+CFrame.new(-1, -49, 53),
+false,
+"Alien Toilet Gold",
+{"Gold"}
+}
+
+local at2 = {
+"Alien Toilet",
+CFrame.new(12, -49, 56),
+false,
+"Alien Toilet Gold",
+{"Gold"}
+}
+
+local at3 = {
+"Alien Toilet",
+CFrame.new(8, -49, 63),
+false,
+"Alien Toilet Gold",
+{"Gold"}
+}
+
+local wod = {
+"The Watchman Of Doom",
+CFrame.new(-0, -49, 36),
+false,
+"The Watchman Of Doom",
+{}
+}
+
+local lv = {
+"Lord Verity",
+CFrame.new(19, -93, 76),
+false,
+"Lord Verity",
+{}
+}
+
+local cruel = {
+"Cruelty",
+CFrame.new(11, -93, 80),
+false,
+"Cruelty",
+{}
+}
+
+local gs = {
+"Godly Sprinkler",
+CFrame.new(7, -49, 47),
+false,
+"Godly Sprinkler Rainbow",
+{"Rainbow"}
+}
+
+local All = {
+at,
+at2,
+at3,
+wod,
+gs,
+fg,
+fg2,
+fg3,
+an,
+an2,
+garg
+}
+
+--// Mode voting
+local voteGui = gameGui:WaitForChild("Voting")
+task.wait(2)
+if voteGui.Visible then
+	events:WaitForChild("VoteForMap"):FireServer("Raid")
+task.wait(8)
+speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Nightmare")
+else
+	task.wait(1)
+speedRemote:InvokeServer(5)
+end
+speedRemote:InvokeServer(5)
+-- // mutator selector
+repeat task.wait() until buttons.Visible
+call()
+-- // placement sequence
+repeat task.wait() until cash.Value >= 345
+	deploy(at)
+repeat task.wait() until cash.Value >= 345
+ deploy(at2)
+repeat task.wait() until cash.Value >= 345
+deploy(at3)
+repeat task.wait() until cash.Value >= 500
+upgrade(All)
+repeat task.wait() until cash.Value >= 800
+deploy(an)
+repeat task.wait() until cash.Value >= 800
+deploy(an2)
+repeat upgrade(All) until cash.Value >= 1500
+deploy(gs)
+repeat task.wait() until cash.Value >= 7350
+deploy(fg)
+repeat upgrade(All) until cash.Value >= 100000
+deploy(wod)
+task.wait(0.5)
+events:WaitForChild("AbilityAuto"):FireServer("Core Blast", true)
+repeat task.wait() until cash.Value >= 199999
+deploy(garg)
+repeat upgrade(All) until wave.Value >= 40
+
+-- \\ end of the script
