@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.2 Chaos loaded.",
+        Text = "Build v5.3 Chaos loaded.",
         Duration = 5
     })
 end)
@@ -404,8 +404,8 @@ local wod = {
 "The Watchman Of Doom",
 CFrame.new(19, -93, 80),
 false,
-"The Watchman Of Doom",
-{}
+"The Watchman Of Doom Rainbow",
+{"Rainbow"}
 }
 
 local lv = {
