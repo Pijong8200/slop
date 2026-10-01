@@ -338,8 +338,8 @@ repeat task.wait() until cash.Value >= 650
 deploy(sen3)
 repeat task.wait() until cash.Value >= 1500
 deploy(gs)
-repeat upgrade(All) task.wait(0.1) until cash.Value >= 7350
+repeat upgrade(All) task.wait(0.5) until cash.Value >= 7350
 deploy(fg)
-repeat upgrade(All) task.wait(0.1) upgrade({sen3}) until wave.Value >= 21
+repeat upgrade(All) task.wait(0.5) upgrade({sen3}) until wave.Value >= 21
 events:WaitForChild("LeaveVote"):FireServer()
 -- \\ end of the script
