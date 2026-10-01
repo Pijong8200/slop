@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.5 Raid Hard loaded.",
+        Text = "Build v2.6 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -507,7 +507,7 @@ local Map = workspace:WaitForChild("Map")
 local function raidDetected(raid)
     print("Raid detected:", raid.Name)
 
-    if raid.Name == "Raid 1" then
+    if raid.Name == "Raid" then
         func1()
 
     elseif raid.Name == "Raid 2" then
