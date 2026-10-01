@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.3 Raid Hard loaded.",
+        Text = "Build v2.4 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -340,6 +340,6 @@ repeat task.wait() until cash.Value >= 1500
 deploy(gs)
 repeat upgrade(All) task.wait(0.5) until cash.Value >= 7350
 deploy(fg)
-repeat upgrade(All) task.wait(0.5) upgrade({sen3}) until wave.Value >= 21
+repeat upgrade(All) task.wait(0.5) upgrade({sen3}) until wave.Value >= 11
 events:WaitForChild("LeaveVote"):FireServer()
 -- \\ end of the script
