@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.4 Raid Hard loaded.",
+        Text = "Build v2.5 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -218,6 +218,7 @@ end
 end
 end
 
+
 local sen = {
 	"Star Egg Noob",
 	CFrame.new(10, -49, 54),
@@ -242,6 +243,78 @@ local sen3 = {
 	{"Gold"}
 }
 
+local senr2 = {
+	"Star Egg Noob",
+	CFrame.new(-15, -78, -9),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr22 = {
+	"Star Egg Noob",
+	CFrame.new(-13, -78, -9),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr23 = {
+	"Star Egg Noob",
+	CFrame.new(-11, -78, -9),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr3 = {
+	"Star Egg Noob",
+	CFrame.new(7, -53, -44),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr32 = {
+	"Star Egg Noob",
+	CFrame.new(21, -53, -44),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr33 = {
+	"Star Egg Noob",
+	CFrame.new(22, -53, -31),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr4 = {
+	"Star Egg Noob",
+	CFrame.new(51, -52, 28),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr42 = {
+	"Star Egg Noob",
+	CFrame.new(53, -52, 26),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local senr43 = {
+	"Star Egg Noob",
+	CFrame.new(55, -52, 24),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
 local garg = {
 	"Gargantuan Cyborg Cat",
 	CFrame.new(-1, -49, 28),
@@ -254,24 +327,40 @@ local fg = {
 "Flowergirl Afterwind",
 CFrame.new(7, -49, 50),
 false,
-"Flowergirl Afterwind Gold",
-{"Gold"}
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
   }
 
 local fg2 = {
 "Flowergirl Afterwind",
 CFrame.new(-10, -49, -1),
 false,
-"Flowergirl Afterwind Gold",
-{"Gold"}
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
 }
 
 local fg3 = {
 "Flowergirl Afterwind",
-CFrame.new(46, -49, 40),
+CFrame.new(-10, -49, -1),
 false,
-"Flowergirl Afterwind Gold",
-{"Gold"}
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
+}
+
+local fgr3 = {
+"Flowergirl Afterwind",
+CFrame.new(-9, -78, -22),
+false,
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
+}
+
+local fgr4 = {
+"Flowergirl Afterwind",
+CFrame.new(57, -52, 20),
+false,
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
 }
 
 local wod = {
@@ -306,6 +395,30 @@ false,
 {"Rainbow"}
 }
 
+local gsr2 = {
+"Godly Sprinkler",
+CFrame.new(7, -49, 47),
+false,
+"Godly Sprinkler Rainbow",
+{"Rainbow"}
+}
+
+local gsr3 = {
+"Godly Sprinkler",
+CFrame.new(-14, -78, -23),
+false,
+"Godly Sprinkler Rainbow",
+{"Rainbow"}
+}
+
+local gsr4 = {
+"Godly Sprinkler",
+CFrame.new(58, -51, 23),
+false,
+"Godly Sprinkler Rainbow",
+{"Rainbow"}
+}
+
 local All = {
 sen,
 sen2,
@@ -314,6 +427,65 @@ gs,
 fg
 }
 
+local function func1()
+repeat task.wait() until cash.Value >= 650
+	deploy(sen)
+repeat task.wait() until cash.Value >= 650
+ deploy(sen2)
+repeat task.wait() until cash.Value >= 650
+deploy(sen3)
+repeat task.wait() until cash.Value >= 1500
+deploy(gs)
+repeat upgrade(All) task.wait(0.5) until cash.Value >= 7350
+deploy(fg)
+repeat upgrade(All) task.wait(0.5) upgrade({sen3}) until wave.Value >= 11
+events:WaitForChild("LeaveVote"):FireServer()
+end
+
+local function func2()
+repeat task.wait() until cash.Value >= 650
+	deploy(senr2)
+repeat task.wait() until cash.Value >= 650
+ deploy(senr22)
+repeat task.wait() until cash.Value >= 650
+deploy(senr23)
+repeat task.wait() until cash.Value >= 1500
+deploy(gsr2)
+repeat upgrade(All) task.wait(0.5) until cash.Value >= 7350
+deploy(fgr2)
+repeat upgrade(All) task.wait(0.5) upgrade({senr23}) until wave.Value >= 11
+events:WaitForChild("LeaveVote"):FireServer()
+end
+
+local function func3()
+repeat task.wait() until cash.Value >= 650
+	deploy(senr3)
+repeat task.wait() until cash.Value >= 650
+ deploy(senr32)
+repeat task.wait() until cash.Value >= 650
+deploy(senr33)
+repeat task.wait() until cash.Value >= 1500
+deploy(gsr3)
+repeat upgrade(All) task.wait(0.5) until cash.Value >= 7350
+deploy(fgr3)
+repeat upgrade(All) task.wait(0.5) upgrade({senr33}) until wave.Value >= 11
+events:WaitForChild("LeaveVote"):FireServer()
+end
+
+local function func4()
+repeat task.wait() until cash.Value >= 650
+	deploy(senr4)
+repeat task.wait() until cash.Value >= 650
+ deploy(senr42)
+repeat task.wait() until cash.Value >= 650
+deploy(senr43)
+repeat task.wait() until cash.Value >= 1500
+deploy(gsr4)
+repeat upgrade(All) task.wait(0.5) until cash.Value >= 7350
+deploy(fgr4)
+repeat upgrade(All) task.wait(0.5) upgrade({senr43}) until wave.Value >= 11
+events:WaitForChild("LeaveVote"):FireServer()
+end
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
 task.wait(2)
@@ -329,17 +501,38 @@ speedRemote:InvokeServer(5)
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
--- // placement sequence
-repeat task.wait() until cash.Value >= 650
-	deploy(sen)
-repeat task.wait() until cash.Value >= 650
- deploy(sen2)
-repeat task.wait() until cash.Value >= 650
-deploy(sen3)
-repeat task.wait() until cash.Value >= 1500
-deploy(gs)
-repeat upgrade(All) task.wait(0.5) until cash.Value >= 7350
-deploy(fg)
-repeat upgrade(All) task.wait(0.5) upgrade({sen3}) until wave.Value >= 11
-events:WaitForChild("LeaveVote"):FireServer()
+
+local Map = workspace:WaitForChild("Map")
+
+local function raidDetected(raid)
+    print("Raid detected:", raid.Name)
+
+    if raid.Name == "Raid 1" then
+        func1()
+
+    elseif raid.Name == "Raid 2" then
+        func2()
+
+    elseif raid.Name == "Raid 3" then
+        func3()
+
+    elseif raid.Name == "Raid 4" then
+        func4()
+    end
+end
+
+-- Check if a Raid folder already exists
+for _, child in Map:GetChildren() do
+    if child:IsA("Folder") and child.Name:match("^Raid %d+$") then
+        raidDetected(child)
+        break
+    end
+end
+
+-- Detect a Raid folder being added later
+Map.ChildAdded:Connect(function(child)
+    if child:IsA("Folder") and child.Name:match("^Raid %d+$") then
+        raidDetected(child)
+    end
+end)
 -- \\ end of the script
