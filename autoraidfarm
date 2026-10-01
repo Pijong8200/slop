@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.8 Raid Easy loaded.",
+        Text = "Build v1.9 Raid Hard loaded.",
         Duration = 5
     })
 end)
