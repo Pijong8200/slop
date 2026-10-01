@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.2 Raid Hard loaded.",
+        Text = "Build v2.3 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -220,7 +220,7 @@ end
 
 local sen = {
 	"Star Egg Noob",
-	CFrame.new(10, -49, 53),
+	CFrame.new(10, -49, 54),
 	false,
 	"Star Egg Noob Gold",
 	{"Gold"}
@@ -236,7 +236,7 @@ local sen2 = {
 
 local sen3 = {
 	"Star Egg Noob",
-	CFrame.new(10, -49, 51),
+	CFrame.new(10, -49, 50),
 	false,
 	"Star Egg Noob Gold",
 	{"Gold"}
