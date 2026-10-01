@@ -348,6 +348,8 @@ repeat task.wait() until cash.Value >= 800
 deploy(an2)
 repeat task.wait() until cash.Value >= 1500
 deploy(gs)
-repeat upgrade(All) until wave.Value >= 25
-
+repeat upgrade(All) until cash.Value >= 199999
+deploy(garg)
+repeat upgrade({garg}) until wave.Value >= 21
+events:WaitForChild("LeaveVote"):FireServer()
 -- \\ end of the script
