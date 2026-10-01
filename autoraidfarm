@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.7 Raid Easy loaded.",
+        Text = "Build v1.8 Raid Easy loaded.",
         Duration = 5
     })
 end)
@@ -218,29 +218,36 @@ end
 end
 end
 
-local an = {
-	"Alien Noob",
-	CFrame.new(8, -49, 55),
-	false,
-	"Alien Noob Gold",
-	{"Gold"}
-}
-
-local an2 = {
-	"Alien Noob",
+local sen = {
+	"Star Egg Noob",
 	CFrame.new(10, -49, 53),
 	false,
-	"Alien Noob Gold",
+	"Star Egg Noob Gold",
 	{"Gold"}
 }
 
+local sen2 = {
+	"Star Egg Noob",
+	CFrame.new(10, -49, 52),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
+
+local sen3 = {
+	"Star Egg Noob",
+	CFrame.new(10, -49, 51),
+	false,
+	"Star Egg Noob Gold",
+	{"Gold"}
+}
 
 local garg = {
 	"Gargantuan Cyborg Cat",
 	CFrame.new(-1, -49, 28),
 	false,
-	"Gargantuan Cyborg Cat",
-	{}
+	"Gargantuan Cyborg Cat Gold",
+	{"Gold"}
 }
 
 local fg = {
@@ -264,30 +271,6 @@ local fg3 = {
 CFrame.new(46, -49, 40),
 false,
 "Flowergirl Afterwind Gold",
-{"Gold"}
-  }
-  
-local at = {
-"Alien Toilet",
-CFrame.new(-2, -49, 41),
-false,
-"Alien Toilet Gold",
-{"Gold"}
-}
-
-local at2 = {
-"Alien Toilet",
-CFrame.new(9, -49, 57),
-false,
-"Alien Toilet Gold",
-{"Gold"}
-}
-
-local at3 = {
-"Alien Toilet",
-CFrame.new(8, -49, 58),
-false,
-"Alien Toilet Gold",
 {"Gold"}
 }
 
@@ -324,9 +307,9 @@ false,
 }
 
 local All = {
-at,
-at2,
-at3,
+sen,
+sen2,
+sen3,
 wod,
 gs,
 fg,
@@ -343,7 +326,7 @@ task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("Raid")
 task.wait(8)
-speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Normal")
+speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Hard")
 else
 	task.wait(1)
 speedRemote:InvokeServer(5)
@@ -353,30 +336,18 @@ speedRemote:InvokeServer(5)
 repeat task.wait() until buttons.Visible
 call()
 -- // placement sequence
-repeat task.wait() until cash.Value >= 345
-	deploy(at)
-repeat task.wait() until cash.Value >= 345
- deploy(at2)
-repeat task.wait() until cash.Value >= 345
-deploy(at3)
-repeat task.wait() until cash.Value >= 800
-deploy(an)
+repeat task.wait() until cash.Value >= 650
+	deploy(sen)
+repeat task.wait() until cash.Value >= 650
+ deploy(sen2)
+repeat task.wait() until cash.Value >= 650
+deploy(sen3)
+repeat task.wait() until cash.Value >= 1500
+deploy(gs)
 repeat task.wait() until cash.Value >= 800
 deploy(an2)
 repeat task.wait() until cash.Value >= 1500
 deploy(gs)
-repeat upgrade(All) until cash.Value >= 7350
-deploy(fg)
-repeat upgrade(All) until cash.Value >= 100000
-deploy(wod)
-task.wait(0.5)
-events:WaitForChild("AbilityAuto"):FireServer("Core Blast", true)
-repeat task.wait() until cash.Value >= 7350
-deploy(fg2)
-repeat task.wait() until cash.Value >= 7350
-deploy(fg3)
-repeat upgrade(All) until cash.Value >= 199999
-deploy(garg)
-repeat upgrade(All) until wave.Value >= 40
+repeat upgrade(All) until wave.Value >= 25
 
 -- \\ end of the script
