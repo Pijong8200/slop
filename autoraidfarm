@@ -252,7 +252,7 @@ local garg = {
 
 local fg = {
 "Flowergirl Afterwind",
-CFrame.new(10, -49, 49),
+CFrame.new(7, -49, 50),
 false,
 "Flowergirl Afterwind Gold",
 {"Gold"}
@@ -310,14 +310,7 @@ local All = {
 sen,
 sen2,
 sen3,
-wod,
-gs,
-fg,
-fg2,
-fg3,
-an,
-an2,
-garg
+fg
 }
 
 --// Mode voting
@@ -344,12 +337,10 @@ repeat task.wait() until cash.Value >= 650
 deploy(sen3)
 repeat task.wait() until cash.Value >= 1500
 deploy(gs)
-repeat task.wait() until cash.Value >= 800
-deploy(an2)
 repeat task.wait() until cash.Value >= 1500
 deploy(gs)
-repeat upgrade(All) until cash.Value >= 199999
-deploy(garg)
-repeat upgrade({garg}) until wave.Value >= 21
+repeat upgrade(All) until cash.Value >= 7350
+deploy(fg)
+repeat upgrade(All) until wave.Value >= 21
 events:WaitForChild("LeaveVote"):FireServer()
 -- \\ end of the script
