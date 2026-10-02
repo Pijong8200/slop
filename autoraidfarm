@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.8 Raid Hard loaded.",
+        Text = "Build v2.9 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -217,6 +217,46 @@ end
 end
 end
 end
+
+--// Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+--// GetStats
+local GetStats = ReplicatedStorage
+    :WaitForChild("Remotes")
+    :WaitForChild("Misc")
+    :WaitForChild("GetStats")
+
+--// Crystal Display
+local CrystalGui = Instance.new("ScreenGui")
+CrystalGui.Name = "CrystalDisplay"
+CrystalGui.ResetOnSpawn = false
+CrystalGui.Parent = game:GetService("CoreGui")
+
+local CrystalLabel = Instance.new("TextLabel")
+CrystalLabel.Size = UDim2.fromOffset(220, 50)
+CrystalLabel.Position = UDim2.new(0.75, -110, 0.8, -25)
+CrystalLabel.BackgroundTransparency = 1
+CrystalLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CrystalLabel.TextSize = 20
+CrystalLabel.Font = Enum.Font.GothamBold
+CrystalLabel.Text = "Loading..."
+CrystalLabel.Parent = CrystalGui
+
+--// Get Crystals
+task.spawn(function()
+    local success, data = pcall(function()
+        return GetStats:InvokeServer(Players.LocalPlayer.UserId)
+    end)
+
+    if success and typeof(data) == "table" then
+        CrystalLabel.Text = tostring(data.Crystals or 0)
+    else
+        warn("GetStats failed:", data)
+        CrystalLabel.Text = "Error"
+    end
+end)
 
 
 local sen = {
@@ -515,7 +555,7 @@ local Map = workspace:WaitForChild("Map")
 local function raidDetected(raid)
     print("Raid detected:", raid.Name)
 
-    if raid.Name == "Raid" then
+    if raid.Name == "Raid" or raid.Name == "Raid 1" then
         func1()
 
     elseif raid.Name == "Raid 2" then
@@ -531,7 +571,10 @@ end
 
 -- Check if a Raid folder already exists
 for _, child in Map:GetChildren() do
-    if child:IsA("Folder") and child.Name:match("^Raid %d+$") then
+    if child:IsA("Folder") and (
+        child.Name == "Raid"
+        or child.Name:match("^Raid %d+$")
+    ) then
         raidDetected(child)
         break
     end
@@ -539,7 +582,10 @@ end
 
 -- Detect a Raid folder being added later
 Map.ChildAdded:Connect(function(child)
-    if child:IsA("Folder") and child.Name:match("^Raid %d+$") then
+    if child:IsA("Folder") and (
+        child.Name == "Raid"
+        or child.Name:match("^Raid %d+$")
+    ) then
         raidDetected(child)
     end
 end)
