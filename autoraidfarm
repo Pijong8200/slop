@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.7 Raid Hard loaded.",
+        Text = "Build v2.8 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -245,7 +245,7 @@ local sen3 = {
 
 local senr2 = {
 	"Star Egg Noob",
-	CFrame.new(-15, -78, -9),
+	CFrame.new(5, -78, -26),
 	false,
 	"Star Egg Noob Gold",
 	{"Gold"}
@@ -253,7 +253,7 @@ local senr2 = {
 
 local senr22 = {
 	"Star Egg Noob",
-	CFrame.new(-13, -78, -9),
+	CFrame.new(1, -78, -22),
 	false,
 	"Star Egg Noob Gold",
 	{"Gold"}
@@ -261,7 +261,7 @@ local senr22 = {
 
 local senr23 = {
 	"Star Egg Noob",
-	CFrame.new(-11, -78, -9),
+	CFrame.new(5, -78, -21),
 	false,
 	"Star Egg Noob Gold",
 	{"Gold"}
@@ -347,6 +347,14 @@ false,
 {"Rainbow"}
 }
 
+local fgr2 = {
+"Flowergirl Afterwind",
+CFrame.new(-0, -78, -26),
+false,
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
+}
+
 local fgr3 = {
 "Flowergirl Afterwind",
 CFrame.new(21, -53, -26),
@@ -397,7 +405,7 @@ false,
 
 local gsr2 = {
 "Godly Sprinkler",
-CFrame.new(7, -49, 47),
+CFrame.new(-3, -78, -26),
 false,
 "Godly Sprinkler Rainbow",
 {"Rainbow"}
