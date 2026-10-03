@@ -229,12 +229,13 @@ local GetStats = ReplicatedStorage
     :WaitForChild("Misc")
     :WaitForChild("GetStats")
 
---// Crystal Display
+--// Crystal GUI
 local CrystalGui = Instance.new("ScreenGui")
 CrystalGui.Name = "CrystalDisplay"
 CrystalGui.ResetOnSpawn = false
 CrystalGui.Parent = game:GetService("CoreGui")
 
+--// Main amount
 local CrystalLabel = Instance.new("TextLabel")
 CrystalLabel.Size = UDim2.fromOffset(220, 50)
 CrystalLabel.Position = UDim2.new(0.75, -110, 0.8, -25)
@@ -246,25 +247,30 @@ CrystalLabel.Text = "Loading..."
 CrystalLabel.Parent = CrystalGui
 
 
---// Popup animation
+--// Popup
 local function CrystalPopup(amount)
 
-    local Popup = CrystalLabel:Clone()
+    local Popup = Instance.new("TextLabel")
 
-    Popup.Name = "CrystalPopup"
-    Popup.Text = "+" .. tostring(amount)
-    Popup.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Popup.TextTransparency = 0
+    Popup.Size = UDim2.fromOffset(220, 50)
 
-    -- Start slightly above the main number
     Popup.Position = UDim2.new(
-        0.75, -110,
-        0.8, -55
+        0.75,
+        -110,
+        0.8,
+        -55
     )
+
+    Popup.BackgroundTransparency = 1
+    Popup.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Popup.TextSize = 20
+    Popup.Font = Enum.Font.GothamBold
+    Popup.Text = "+" .. tostring(amount)
+    Popup.TextTransparency = 0
 
     Popup.Parent = CrystalGui
 
-    -- Move upward first
+    -- Pop upward
     local UpTween = TweenService:Create(
         Popup,
         TweenInfo.new(
@@ -274,46 +280,59 @@ local function CrystalPopup(amount)
         ),
         {
             Position = UDim2.new(
-                0.75, -110,
-                0.8, -80
+                0.75,
+                -110,
+                0.8,
+                -80
             )
-        }
-    )
-
-    -- Then fall toward the main number while fading
-    local DownTween = TweenService:Create(
-        Popup,
-        TweenInfo.new(
-            0.45,
-            Enum.EasingStyle.Quad,
-            Enum.EasingDirection.In,
-        ),
-        {
-            Position = UDim2.new(
-                0.75, -110,
-                0.8, -25
-            ),
-            TextTransparency = 1
         }
     )
 
     UpTween:Play()
 
     UpTween.Completed:Connect(function()
-        DownTween:Play()
-    end)
 
-    DownTween.Completed:Connect(function()
-        Popup:Destroy()
+        -- Make sure it wasn't destroyed
+        if not Popup or not Popup.Parent then
+            return
+        end
+
+        -- Fall toward main number + fade
+        local DownTween = TweenService:Create(
+            Popup,
+            TweenInfo.new(
+                0.45,
+                Enum.EasingStyle.Quad,
+                Enum.EasingDirection.In
+            ),
+            {
+                Position = UDim2.new(
+                    0.75,
+                    -110,
+                    0.8,
+                    -25
+                ),
+
+                TextTransparency = 1
+            }
+        )
+
+        DownTween:Play()
+
+        DownTween.Completed:Connect(function()
+            if Popup then
+                Popup:Destroy()
+            end
+        end)
     end)
 end
 
 
---// Current amount
-local LastCrystals
+--// Previous amount
+local LastCrystals = nil
 
 
---// Check for changes
+--// Monitor crystals
 task.spawn(function()
 
     while true do
@@ -324,38 +343,41 @@ task.spawn(function()
 
         if success and typeof(data) == "table" then
 
-            local CurrentCrystals = tonumber(data.Crystals) or 0
+            local CurrentCrystals = tonumber(data.Crystals)
 
-            -- First successful reading
-            if LastCrystals == nil then
+            if CurrentCrystals then
 
-                LastCrystals = CurrentCrystals
-                CrystalLabel.Text = tostring(CurrentCrystals)
+                -- First result
+                if LastCrystals == nil then
 
-            -- Amount increased
-            elseif CurrentCrystals > LastCrystals then
+                    LastCrystals = CurrentCrystals
+                    CrystalLabel.Text = tostring(CurrentCrystals)
 
-                local Added = CurrentCrystals - LastCrystals
+                -- Increased
+                elseif CurrentCrystals > LastCrystals then
 
-                CrystalLabel.Text = tostring(CurrentCrystals)
+                    local Added = CurrentCrystals - LastCrystals
 
-                CrystalPopup(Added)
+                    LastCrystals = CurrentCrystals
+                    CrystalLabel.Text = tostring(CurrentCrystals)
 
-                LastCrystals = CurrentCrystals
+                    task.spawn(function()
+                        CrystalPopup(Added)
+                    end)
 
-            -- Amount decreased
-            elseif CurrentCrystals ~= LastCrystals then
+                -- Decreased
+                elseif CurrentCrystals < LastCrystals then
 
-                CrystalLabel.Text = tostring(CurrentCrystals)
-
-                LastCrystals = CurrentCrystals
+                    LastCrystals = CurrentCrystals
+                    CrystalLabel.Text = tostring(CurrentCrystals)
+                end
             end
         end
 
-        -- How often to check the server
         task.wait(0.5)
     end
 end)
+
 
 local sen = {
 	"Star Egg Noob",
