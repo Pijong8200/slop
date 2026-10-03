@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.9 Raid Hard loaded.",
+        Text = "Build v3 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -221,6 +221,7 @@ end
 --// Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 --// GetStats
 local GetStats = ReplicatedStorage
@@ -244,20 +245,117 @@ CrystalLabel.Font = Enum.Font.GothamBold
 CrystalLabel.Text = "Loading..."
 CrystalLabel.Parent = CrystalGui
 
---// Get Crystals
-task.spawn(function()
-    local success, data = pcall(function()
-        return GetStats:InvokeServer(Players.LocalPlayer.UserId)
+
+--// Popup animation
+local function CrystalPopup(amount)
+
+    local Popup = CrystalLabel:Clone()
+
+    Popup.Name = "CrystalPopup"
+    Popup.Text = "+" .. tostring(amount)
+    Popup.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Popup.TextTransparency = 0
+
+    -- Start slightly above the main number
+    Popup.Position = UDim2.new(
+        0.75, -110,
+        0.8, -55
+    )
+
+    Popup.Parent = CrystalGui
+
+    -- Move upward first
+    local UpTween = TweenService:Create(
+        Popup,
+        TweenInfo.new(
+            0.25,
+            Enum.EasingStyle.Quad,
+            Enum.EasingDirection.Out
+        ),
+        {
+            Position = UDim2.new(
+                0.75, -110,
+                0.8, -80
+            )
+        }
+    )
+
+    -- Then fall toward the main number while fading
+    local DownTween = TweenService:Create(
+        Popup,
+        TweenInfo.new(
+            0.45,
+            Enum.EasingStyle.Quad,
+            Enum.EasingDirection.In,
+        ),
+        {
+            Position = UDim2.new(
+                0.75, -110,
+                0.8, -25
+            ),
+            TextTransparency = 1
+        }
+    )
+
+    UpTween:Play()
+
+    UpTween.Completed:Connect(function()
+        DownTween:Play()
     end)
 
-    if success and typeof(data) == "table" then
-        CrystalLabel.Text = tostring(data.Crystals or 0)
-    else
-        warn("GetStats failed:", data)
-        CrystalLabel.Text = "Error"
+    DownTween.Completed:Connect(function()
+        Popup:Destroy()
+    end)
+end
+
+
+--// Current amount
+local LastCrystals
+
+
+--// Check for changes
+task.spawn(function()
+
+    while true do
+
+        local success, data = pcall(function()
+            return GetStats:InvokeServer(Players.LocalPlayer.UserId)
+        end)
+
+        if success and typeof(data) == "table" then
+
+            local CurrentCrystals = tonumber(data.Crystals) or 0
+
+            -- First successful reading
+            if LastCrystals == nil then
+
+                LastCrystals = CurrentCrystals
+                CrystalLabel.Text = tostring(CurrentCrystals)
+
+            -- Amount increased
+            elseif CurrentCrystals > LastCrystals then
+
+                local Added = CurrentCrystals - LastCrystals
+
+                CrystalLabel.Text = tostring(CurrentCrystals)
+
+                CrystalPopup(Added)
+
+                LastCrystals = CurrentCrystals
+
+            -- Amount decreased
+            elseif CurrentCrystals ~= LastCrystals then
+
+                CrystalLabel.Text = tostring(CurrentCrystals)
+
+                LastCrystals = CurrentCrystals
+            end
+        end
+
+        -- How often to check the server
+        task.wait(0.5)
     end
 end)
-
 
 local sen = {
 	"Star Egg Noob",
