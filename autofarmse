@@ -358,6 +358,7 @@ local Event = game:GetService("ReplicatedStorage").Events.RogueCard
 local priorityList = {
     "Golden Toilet",
     "Blood Pact",
+    "Tunnel Vision",
     "Turbo Flush",
     "Glass Cannon",
     "Slop Power",
