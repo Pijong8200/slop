@@ -262,7 +262,7 @@ local gs = {
 "Godly Sprinkler",
 CFrame.new(11, -77, 22),
 false,
-"Godly Sprinkler Rainbow",
+"Godly Sprinkler Rainbow #2",
 {"Rainbow"}
 }
 
@@ -292,7 +292,7 @@ false,
 
 local garg = {
 "Gargantuan Cyborg Cat",
-CFrame.new(14, -77, 10),
+CFrame.new(14, -77, 7),
 false,
 "Gargantuan Cyborg Cat Gold",
 {"Gold"}
