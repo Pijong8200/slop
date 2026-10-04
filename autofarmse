@@ -339,13 +339,13 @@ end
 speedRemote:InvokeServer(6)
 local specialf = game:GetService("Players").LocalPlayer.PlayerGui.GameGui.SpecialVoting
 task.wait(1)
-specialf:GetPropertyChangedSignal("Visible"):Connect(function()
-if specialf.Visible then
-events:WaitForChild("VoteForSpecial"):FireServer("Rogue")
-else
-task.wait(1) 
-end
-end)
+--specialf:GetPropertyChangedSignal("Visible"):Con--nect(function()
+--if specialf.Visible then
+--events:WaitForChild("VoteForSpecial"):FireServer--("Rogue")
+--else
+--task.wait(1) 
+--end
+--end)
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
