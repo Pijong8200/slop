@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.5 Space Chaos loaded.",
+        Text = "Build v1.7 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -268,9 +268,9 @@ false,
 
 local astro = {
 "Astro Upgraded Titan Speakerman",
-CFrame.new(12, -77, 16),
+CFrame.new(9, -77, 13),
 false,
-"Astro Upgraded Titan Speakerman",
+"Astro Upgraded Titan Speakerman #3",
 {}
 }
 
@@ -340,7 +340,9 @@ else
 speedRemote:InvokeServer(6)
 end
 speedRemote:InvokeServer(6)
-events:WaitForChild("VoteForSpecial"):FireServer("Rogue")
+local specialf = game:GetService("Players").LocalPlayer.PlayerGui.GameGui.SpecialVoting
+repeat task.wait() until specialf.Visible == true
+events:WaitForChild("VoteForSpecial"):FireServer("UltraRogue")
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
@@ -349,6 +351,7 @@ call()
 local Event = game:GetService("ReplicatedStorage").Events.RogueCard
 
 local priorityList = {
+    "Golden Toilet",
     "Blood Pact",
     "Turbo Flush",
     "Glass Cannon",
