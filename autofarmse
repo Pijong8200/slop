@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v5.3 Chaos loaded.",
+        Text = "Build v1 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -232,252 +232,136 @@ end
 end
 end
 
-local aliennub = {
-	"Alien Noob",
-	CFrame.new(16, -94, 61),
-	false,
-	"Alien Noob",
-	{}
-}
-
-local oc = {
-	"Orbital Camera",
-	CFrame.new(11, -93, 81),
-	false,
-	"Orbital Camera",
-	{}
-}
-
-local alien1x1 = {
-	"Alien 1x1x1x1",
-	CFrame.new(17, -93, 75),
-	false,
-	"Alien 1x1x1x1",
-	{}
-}
-
-local dj = {
-	"DJ Toilet",
-	CFrame.new(37, -93, 101),
-	false,
-	"DJ Toilet",
-	{}
-}
-
-local gt = {
-"Glistening Skibidi",
-CFrame.new(37, -93, 107),
+local sen = {
+"Star Egg Noob",
+CFrame.new(8, -77, 26),
 false,
-"Glistening Skibidi",
-{}
-}
-
-local silly = {
-	"51lly n00b :3",
-	CFrame.new(8, -93, 77),
-	false,
-	"51lly n00b :3",
-	{}
-}
-
-local silly2 = {
-	"51lly n00b :3",
-	CFrame.new(12, -93, 77),
-	false,
-	"51lly n00b :3",
-	{}
-}
-
-local tungmidas = {
-	"Tung Tung Midas",
-	CFrame.new(-23, -93, -10),
-	false,
-	"Tung Tung Midas",
-	{}
-}
-
-local tungmidas2 = {
-	"Tung Tung Midas",
-	CFrame.new(32, -93, 112),
-	false,
-	"Tung Tung Midas",
-	{}
-}
-
-local isaac = {
-	"IsaacE9",
-	CFrame.new(9, -93, 75),
-	false,
-	"IsaacE9 Gold",
-	{"Gold"}
-}
-
-local isaac2 = {
-	"IsaacE9",
-	CFrame.new(12, -93, 75),
-	false,
-	"IsaacE9 Gold",
-	{"Gold"}
-}
-
-local uts = {
-"Upgraded Titan Speakerman",
-CFrame.new(10, -93, 69),
-false,
-"Upgraded Titan Speakerman",
-{}
-}
-
-local uts2 = {
-	"Upgraded Titan Speakerman",
-	CFrame.new(13, -93, 69),
-	false,
-	"Upgraded Titan Speakerman",
-	{}
-}
-
-local atvm = {
-"Astronaut TV Man",
-CFrame.new(19, -93, 75),
-false,
-"Astronaut TV Man",
-{}
-}
-
-local star = {
-"Star Fruit",
-CFrame.new(19, -93, 67),
-false,
-"Star Fruit Rainbow",
-{"Rainbow"}
-}
-
-local bacteria = {
-"Bacteria",
-CFrame.new(32, -93, 98),
-false,
-"Bacteria Rainbow",
-{"Rainbow"}
-}
-
-local flower = {
-"Flowergirl Afterwind",
-CFrame.new(10, -93, 69),
-false,
-"Flowergirl Afterwind Gold",
+"Star Egg Noob Gold",
 {"Gold"}
 }
 
-local kn = {
-"King Noobini",
-CFrame.new(32, -93, 109),
+local sen2 = {
+"Star Egg Noob",
+CFrame.new(7, -77, 23),
 false,
-"King Noobini",
-{}
-}
-
-local at = {
-"Alien Toilet",
-CFrame.new(15, -93, 62),
-false,
-"Alien Toilet Gold",
+"Star Egg Noob Gold",
 {"Gold"}
 }
 
-local at2 = {
-"Alien Toilet",
-CFrame.new(17, -93, 62),
+local sen3 = {
+"Star Egg Noob",
+CFrame.new(7, -77, 19),
 false,
-"Alien Toilet Gold",
+"Star Egg Noob Gold",
 {"Gold"}
 }
 
-local at3 = {
-"Alien Toilet",
-CFrame.new(19, -93, 62),
-false,
-"Alien Toilet Gold",
-{"Gold"}
-}
-
-local wod = {
-"The Watchman Of Doom",
-CFrame.new(19, -93, 80),
-false,
-"The Watchman Of Doom Rainbow",
-{"Rainbow"}
-}
-
-local lv = {
-"Gargantuan Cyborg Cat",
-CFrame.new(19, -93, 76),
-false,
-"Gargantuan Cyborg Cat Gold",
-{"Gold"}
-}
-
-local cruel = {
-"Cruelty",
-CFrame.new(11, -93, 80),
-false,
-"Cruelty",
-{}
-}
 
 local gs = {
 "Godly Sprinkler",
-CFrame.new(14, -93, 69),
+CFrame.new(11, -77, 22),
 false,
 "Godly Sprinkler Rainbow",
 {"Rainbow"}
 }
 
+local astro = {
+"Astro Upgraded Titan Speakerman",
+CFrame.new(12, -77, 16),
+false,
+"Astro Upgraded Titan Speakerman",
+{}
+}
+
+local flower = {
+"Flowergirl Afterwind",
+CFrame.new(12, -77, 18),
+false,
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
+}
+
+local flower2 = {
+"Flowergirl Afterwind",
+CFrame.new(7, -77, -2),
+false,
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
+}
+
+local garg = {
+"Gargantuan Cyborg Cat",
+CFrame.new(14, -77, 10),
+false,
+"Gargantuan Cyborg Cat Gold",
+{"Gold"}
+}
+
+local ohio = {
+"The Ohio Final Boss",
+CFrame.new(7, -77, 17),
+false,
+"The Ohio Final Boss",
+{}
+}
+
+local ohio2 = {
+"The Ohio Final Boss",
+CFrame.new(6, -77, 14),
+false,
+"The Ohio Final Boss",
+{}
+}
+
+
 local All = {
-at,
-at2,
-at3,
-wod,
+sen,
+sen2,
+sen3,
 gs,
+ohio,
+ohio2,
+garg,
 flower,
-cruel,
-lv
+flower2,
+astro
 }
 
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
 task.wait(2)
 if voteGui.Visible then
-	events:WaitForChild("VoteForMap"):FireServer("SpaceEndless")
+	events:WaitForChild("VoteForMap"):FireServer("Area 51")
 task.wait(8)
-speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Chaos")
+speedRemote:InvokeServer(6)	events:WaitForChild("VoteForComplication"):FireServer("Chaos")
 else
 	task.wait(1)
-speedRemote:InvokeServer(5)
+speedRemote:InvokeServer(6)
 end
-speedRemote:InvokeServer(5)
+speedRemote:InvokeServer(6)
+events:WaitForChild("VoteForSpecial"):FireServer("Rogue")
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
 -- // placement sequence
-repeat task.wait() until cash.Value >= 345
-	deploy(at)
-repeat task.wait() until cash.Value >= 345
- deploy(at2)
-repeat task.wait() until cash.Value >= 345
-deploy(at3)
-repeat task.wait() until cash.Value >= 500
-upgrade(All)
-repeat upgrade(All) until cash.Value >= 1500
-deploy(gs)
-repeat task.wait() until cash.Value >= 7350
+repeat task.wait() until cash.Value >= 650
+	deploy(sen)
+repeat task.wait() until cash.Value >= 650
+ deploy(sen2)
+repeat task.wait() until cash.Value >= 650
+deploy(sen3)
+repeat task.wait() until cash.Value >= 1500
+upgrade(gs)
+repeat upgrade(All) until cash.Value >= 7350
 deploy(flower)
-repeat upgrade(All) until cash.Value >= 100000
-deploy(wod)
-task.wait(0.5)
-events:WaitForChild("AbilityAuto"):FireServer("Core Blast", true)
 repeat upgrade(All) until cash.Value >= 199999
-deploy(lv)
-repeat upgrade(All) until wave.Value >= 31
-events:WaitForChild("LeaveVote"):FireServer()
+deploy(garg)
+repeat upgrade(All) until cash.Value >= 100000
+deploy(astro)
+task.wait(0.5)
+events:WaitForChild("AbilityAuto"):FireServer("Overdrive", true)
+repeat upgrade(All) until cash.Value >= 7350
+deploy(flower2)
+repeat upgrade(All) until wave.Value >= 30
 
 -- // end of the script
