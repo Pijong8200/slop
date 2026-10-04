@@ -663,9 +663,9 @@ task.wait(8)
 speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Hard")
 else
 	task.wait(1)
-speedRemote:InvokeServer(5)
+speedRemote:InvokeServer(6)
 end
-speedRemote:InvokeServer(5)
+speedRemote:InvokeServer(6)
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
