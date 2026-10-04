@@ -309,7 +309,7 @@ false,
 
 local ohio2 = {
 "The Ohio Final Boss",
-CFrame.new(6, -77, 14),
+CFrame.new(7, -77, 14),
 false,
 "The Ohio Final Boss Rainbow",
 {"Rainbow"}
