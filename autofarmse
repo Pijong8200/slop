@@ -202,7 +202,6 @@ end
 local priority = {
 "Speedrun",
 "GlassBase",
-"Bankrupt",
 "Gigantism",
 "BossRush",
 "Blackout",
