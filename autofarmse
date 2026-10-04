@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.9 Space Chaos loaded.",
+        Text = "Build v2 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -200,9 +200,9 @@ end
 
 -- // mutator solver
 local priority = {
+"Speedrun",
 "GlassBase",
 "Bankrupt",
-"Speedrun",
 "Gigantism",
 "BossRush",
 "Blackout",
@@ -344,7 +344,7 @@ speedRemote:InvokeServer(6)
 local specialf = game:GetService("Players").LocalPlayer.PlayerGui.GameGui.SpecialVoting
 task.wait(1)
 if specialf.Visible then
-events:WaitForChild("VoteForSpecial"):FireServer("UltraRogue")
+events:WaitForChild("VoteForSpecial"):FireServer("Rogue")
 else
 task.wait(1)
 end
