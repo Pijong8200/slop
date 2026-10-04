@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3 Raid Hard loaded.",
+        Text = "Build v3.1 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -660,12 +660,42 @@ task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("Raid")
 task.wait(8)
-speedRemote:InvokeServer(5)	events:WaitForChild("VoteForComplication"):FireServer("Hard")
+speedRemote:InvokeServer(6)	events:WaitForChild("VoteForComplication"):FireServer("Hard")
+
 else
 	task.wait(1)
 speedRemote:InvokeServer(6)
 end
 speedRemote:InvokeServer(6)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VoteSkipFunc = ReplicatedStorage:WaitForChild("Functions"):WaitForChild("VoteSkip")
+
+-- This boolean controls the loop. You can change it to 'false' later if you want to turn it off.
+local autoSkipEnabled = true 
+
+-- task.spawn runs this loop inside its own dedicated thread
+task.spawn(function()
+    print("[Auto-Skip]: Background automation thread started successfully.")
+    
+    while autoSkipEnabled do
+        -- pcall wraps the remote invocation so that if you disconnect or the match ends, 
+        -- the script won't crash and break your other code.
+        local success, result = pcall(function()
+            return VoteSkipFunc:InvokeServer()
+        end)
+        
+        -- Optional: Un-comment the line below if you want to debug the server response in F9 console
+        -- if success then print("[Auto-Skip]: Attempted skip. Response:", tostring(result)) end
+        
+        -- Pauses this specific loop thread for exactly 0.5 seconds before trying again
+        task.wait(0.5) 
+    end
+    
+    print("[Auto-Skip]: Background thread stopped.")
+end)
+
+-- Any code written down here will execute INSTANTLY without waiting for the loop above!
+print("[Main Script]: Continuing execution of other tasks smoothly...")
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
