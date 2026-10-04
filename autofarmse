@@ -346,8 +346,9 @@ specialf:GetPropertyChangedSignal("Visible"):Connect(function()
 if specialf.Visible then
 events:WaitForChild("VoteForSpecial"):FireServer("Rogue")
 else
-task.wait(1)
+task.wait(1) 
 end
+end)
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
