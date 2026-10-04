@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.8 Space Chaos loaded.",
+        Text = "Build v1.9 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -268,10 +268,10 @@ false,
 }
 
 local astro = {
-"Astro Upgraded Titan Speakerman",
+"Astro Upgraded Titan Speaker Man",
 CFrame.new(12, -77, 14),
 false,
-"Astro Upgraded Titan Speakerman #3",
+"Astro Upgraded Titan Speaker Man #3",
 {}
 }
 
@@ -365,7 +365,7 @@ local priorityList = {
     "Sticky Slop",
     "Caffeine",
     "Long Neck",
-    "Sharp Toilet"
+    "Sharp Toilets"
 }
 
 local offerCount = 0
