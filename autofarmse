@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.4 Space Chaos loaded.",
+        Text = "Build v1.5 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -292,7 +292,7 @@ false,
 
 local garg = {
 "Gargantuan Cyborg Cat",
-CFrame.new(14, -77, 7),
+CFrame.new(16, -77, 4),
 false,
 "Gargantuan Cyborg Cat Gold",
 {"Gold"}
@@ -425,12 +425,16 @@ repeat task.wait() until cash.Value >= 1500
 deploy(gs)
 repeat upgrade(All) until cash.Value >= 7350
 deploy(flower)
-repeat upgrade(All) until cash.Value >= 199999
-deploy(garg)
+repeat upgrade(All) until cash.Value >= 9999
+deploy(ohio)
+repeat upgrade(All) until cash.Value >= 9999
+deploy(ohio2)
 repeat upgrade(All) until cash.Value >= 100000
 deploy(astro)
 task.wait(0.5)
 events:WaitForChild("AbilityAuto"):FireServer("Overdrive", true)
+repeat upgrade(All) until cash.Value >= 1999999
+deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
 deploy(flower2)
 repeat upgrade(All) until wave.Value >= 30
