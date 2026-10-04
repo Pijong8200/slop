@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1 Space Chaos loaded.",
+        Text = "Build v1.1 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -107,7 +107,8 @@ if not functions then
 	tapKey(Enum.KeyCode.S)
 	tapKey(Enum.KeyCode.D)
 	task.wait(1)
-	events:WaitForChild("StartElevator"):FireServer("Elevator6")
+	events:WaitForChild("CreateParty"):FireServer("Elevator6")
+events:WaitForChild("StartElevator"):FireServer(Elevator6")
 	print("Attempted to teleport")
 	task.wait(3)
 	return
@@ -343,6 +344,76 @@ events:WaitForChild("VoteForSpecial"):FireServer("Rogue")
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
+-- // rogue cards
+
+local Event = game:GetService("ReplicatedStorage").Events.RogueCard
+
+local priorityList = {
+    "Blood Pact",
+    "Turbo Flush",
+    "Glass Cannon",
+    "Slop Power",
+    "Rushed Job",
+    "Sticky Slop",
+    "Caffeine",
+    "Long Neck",
+    "Sharp Toilet"
+}
+
+local offerCount = 0
+
+local function getPriority(title)
+    for priority, wantedTitle in ipairs(priorityList) do
+        if title == wantedTitle then
+            return priority
+        end
+    end
+
+    return math.huge
+end
+
+Event.OnClientEvent:Connect(function(action, data)
+    if action ~= "Offer" then
+        return
+    end
+
+    if not data or not data.Cards then
+        return
+    end
+
+    -- Count which offer this is
+    offerCount += 1
+
+    local bestIndex = nil
+    local bestPriority = math.huge
+
+    for index, card in ipairs(data.Cards) do
+        local priority = getPriority(card.Title)
+
+        if priority < bestPriority then
+            bestPriority = priority
+            bestIndex = index
+        end
+    end
+
+    if bestIndex then
+        local selectedCard = data.Cards[bestIndex]
+
+        print("Offer:", offerCount)
+        print("Picking:", selectedCard.Title)
+        print("Card index:", bestIndex)
+
+        Event:FireServer(
+            "Pick",
+            offerCount,
+            bestIndex
+        )
+    else
+        print("No priority card found for offer", offerCount)
+    end
+end)
+
+
 -- // placement sequence
 repeat task.wait() until cash.Value >= 650
 	deploy(sen)
@@ -351,7 +422,7 @@ repeat task.wait() until cash.Value >= 650
 repeat task.wait() until cash.Value >= 650
 deploy(sen3)
 repeat task.wait() until cash.Value >= 1500
-upgrade(gs)
+deploy(gs)
 repeat upgrade(All) until cash.Value >= 7350
 deploy(flower)
 repeat upgrade(All) until cash.Value >= 199999
