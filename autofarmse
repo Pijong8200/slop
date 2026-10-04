@@ -202,10 +202,7 @@ end
 local priority = {
 "Speedrun",
 "GlassBase",
-"Gigantism",
-"BossRush",
-"Blackout",
-"Regeneration",
+"Tiny Slop",
 "Brainrot"}
 
 local function search()
@@ -365,6 +362,7 @@ local priorityList = {
     "Blood Pact",
     "Slop Power",
     "Slop Snack",
+    "Shrink Ray",
     "Tunnel Vision",
     "Glass Cannon",
     "Slop Power",
