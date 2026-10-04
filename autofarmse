@@ -448,7 +448,7 @@ deploy(ohio2)
 repeat upgrade(All) until cash.Value >= 100000
 deploy(astro)
 task.wait(0.5)
-events:WaitForChild("AbilityAuto"):FireServer("Overdrive", true)
+events:WaitForChild("AbilityAuto"):FireServer("OverCharge", true)
 repeat upgrade(All) until cash.Value >= 1999999
 deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
