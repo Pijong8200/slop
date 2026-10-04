@@ -236,7 +236,7 @@ end
 
 local sen = {
 "Star Egg Noob",
-CFrame.new(8, -77, 26),
+CFrame.new(7, -77, 26),
 false,
 "Star Egg Noob Gold",
 {"Gold"}
