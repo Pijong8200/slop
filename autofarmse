@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.3 Space Chaos loaded.",
+        Text = "Build v2 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -372,7 +372,8 @@ Event.OnClientEvent:Connect(function(action, data)
 
     Event:FireServer(
         "Pick",
-        pickNumber
+        pickNumber,
+        1
     )
 end)
 
