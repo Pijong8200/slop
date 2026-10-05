@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.2 Space Chaos loaded.",
+        Text = "Build v2.3 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -203,6 +203,7 @@ end
 local priority = {
 "Speedrun",
 "GlassBase",
+"ArmoredSlop",
 "TinySlop",
 "Blackout",
 "Brainrot"
@@ -353,83 +354,27 @@ end)
 repeat task.wait() until buttons.Visible
 call()
 -- // rogue cards
-
 local Event = game:GetService("ReplicatedStorage").Events.RogueCard
 
-local priorityList = {
-    "Turbo Flush",
-    "Cash Printer",
-    "Fast Flush",
-    "Rushed Job",
-    "Golden Toilet",
-    "Blood Pact",
-    "Slop Power",
-    "Slop Snack",
-    "Shrink Ray",
-    "Tunnel Vision",
-    "Glass Cannon",
-    "Slop Power",
-    "Binoculars",
-    "Rushed Job",
-    "Sticky Slop",
-    "Caffeine",
-    "Long Neck",
-    "Sharp Toilets"
-}
-
 local offerCount = 0
-
-local function getPriority(title)
-    for priority, wantedTitle in ipairs(priorityList) do
-        if title == wantedTitle then
-            return priority
-        end
-    end
-
-    return math.huge
-end
 
 Event.OnClientEvent:Connect(function(action, data)
     if action ~= "Offer" then
         return
     end
 
-    if not data or not data.Cards then
-        return
-    end
-
-    -- Count which offer this is
     offerCount += 1
 
-    local bestIndex = nil
-    local bestPriority = math.huge
+    local pickNumber = 100000 + offerCount
 
-    for index, card in ipairs(data.Cards) do
-        local priority = getPriority(card.Title)
+    print("Offer:", offerCount)
+    print("Sending Pick:", pickNumber)
 
-        if priority < bestPriority then
-            bestPriority = priority
-            bestIndex = index
-        end
-    end
-
-    if bestIndex then
-        local selectedCard = data.Cards[bestIndex]
-
-        print("Offer:", offerCount)
-        print("Picking:", selectedCard.Title)
-        print("Card index:", bestIndex)
-
-        Event:FireServer(
-            "Pick",
-            offerCount,
-            bestIndex
-        )
-    else
-        print("No priority card found for offer", offerCount)
-    end
+    Event:FireServer(
+        "Pick",
+        pickNumber
+    )
 end)
-
 
 -- // placement sequence
 repeat task.wait() until cash.Value >= 650
