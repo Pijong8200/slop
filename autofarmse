@@ -108,6 +108,7 @@ if not functions then
 	tapKey(Enum.KeyCode.D)
 	task.wait(1)
 	events:WaitForChild("CreateParty"):FireServer("Elevator6", 1, true)
+task.wait(1)
 events:WaitForChild("StartElevator"):FireServer("Elevator6")
 	print("Attempted to teleport")
 	task.wait(3)
