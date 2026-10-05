@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.1 Space Chaos loaded.",
+        Text = "Build v2.2 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -341,13 +341,13 @@ end
 speedRemote:InvokeServer(6)
 local specialf = game:GetService("Players").LocalPlayer.PlayerGui.GameGui.SpecialVoting
 task.wait(1)
---specialf:GetPropertyChangedSignal("Visible"):Con--nect(function()
---if specialf.Visible then
---events:WaitForChild("VoteForSpecial"):FireServer--("Rogue")
---else
---task.wait(1) 
---end
---end)
+specialf:GetPropertyChangedSignal("Visible"):Connect(function()
+if specialf.Visible then
+events:WaitForChild("VoteForSpecial"):FireServer("Pact")
+else
+task.wait(1) 
+end
+end)
 -- // mutator selector
 repeat task.wait() until buttons.Visible
 call()
@@ -449,7 +449,7 @@ repeat upgrade(All) until cash.Value >= 100000
 deploy(astro)
 task.wait(0.5)
 events:WaitForChild("AbilityAuto"):FireServer("OverCharge", true)
-repeat upgrade(All) until cash.Value >= 1999999
+repeat upgrade(All) until cash.Value >= 199999
 deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
 deploy(flower2)
