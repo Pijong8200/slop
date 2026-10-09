@@ -263,7 +263,7 @@ local gs = {
 "Godly Sprinkler",
 CFrame.new(11, -77, 22),
 false,
-"Godly Sprinkler Rainbow #2",
+"Godly Sprinkler Rainbow #3",
 {"Rainbow"}
 }
 
