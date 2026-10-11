@@ -4,66 +4,28 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local CoreGui = game:GetService("CoreGui")
 local player = Players.LocalPlayer
-local PlayerGui = player:WaitForChild("PlayerGui")
-
---========================================================================
--- [INTEGRATION 1/2] ANTI-AFK / ANTI-MACRO LOGIC
---========================================================================
-local function handleAntiMacro(gui)
-    if not gui:IsA("ScreenGui") then
-        return
-    end
-
-    local frame = gui:WaitForChild("Frame", 5) 
-    if not frame then
-        return
-    end
-
-    local function setupButton(child)
-        if child:IsA("TextButton") then
-            task.wait(3)
-            child.Size = UDim2.new(10, 0, 10, 0)
-        end
-    end
-
-    for _, child in ipairs(frame:GetChildren()) do
-        task.wait(3)
-        setupButton(child)
-    end
-
-    frame.ChildAdded:Connect(setupButton)
-end
-
-local existingAntiMacro = PlayerGui:FindFirstChild("AntiMacroCheck")
-if existingAntiMacro then
-    handleAntiMacro(existingAntiMacro)
-end
-
-PlayerGui.ChildAdded:Connect(function(child)
-    if child.Name == "AntiMacroCheck" then
-        task.wait(3)
-        handleAntiMacro(child)
-    end
-end)
---========================================================================
 
 -- Re-running the script should not stack duplicate utility GUIs.
+local CoreGui = game:GetService("CoreGui")
 for _, guiName in ipairs({"QueueKillSwitch", "TimerGui"}) do
-    local existing = (guiName == "TimerGui" and PlayerGui or CoreGui):FindFirstChild(guiName)
+    local existing = (guiName == "TimerGui" and player:WaitForChild("PlayerGui") or CoreGui):FindFirstChild(guiName)
     if existing then existing:Destroy() end
 end
 
 pcall(function()
     StarterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.2 Space Chaos loaded.",
+        Text = "Build v2.3 Space Chaos loaded.",
         Duration = 5
     })
 end)
 
+
+
+
 -- 1. Setup the Teleport Queue
+
 local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
 if queue then
     queue([[
@@ -74,7 +36,7 @@ if queue then
             return -- Stop execution completely
         end
 
-        loadstring(game:HttpGet("https://githubusercontent.com"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse"))()
     ]])
 end
 
@@ -84,19 +46,21 @@ screenGui.Name = "QueueKillSwitch"
 screenGui.Parent = CoreGui
 
 local killButton = Instance.new("TextButton")
-killButton.Size = UDim2.new(0, 60, 0, 25)
-killButton.Position = UDim2.new(1, -70, 0, 10)
-killButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+killButton.Size = UDim2.new(0, 60, 0, 25) -- Small width and height
+killButton.Position = UDim2.new(1, -70, 0, 10) -- Top right corner (with a 10px offset)
+killButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Dark Red
 killButton.Text = "Kill Queue"
 killButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 killButton.Font = Enum.Font.SourceSansBold
 killButton.TextSize = 12
 killButton.Parent = screenGui
 
+-- Make the button look slightly rounded
 local uiCorner = Instance.new("UICorner")
 uiCorner.CornerRadius = UDim.new(0, 4)
 uiCorner.Parent = killButton
 
+-- Button Functionality
 killButton.MouseButton1Click:Connect(function()
     if writefile then
         local ok, err = pcall(writefile, "cancel_queue.txt", "true")
@@ -112,7 +76,16 @@ killButton.MouseButton1Click:Connect(function()
     end
 end)
 
+
+
+
+
+
 --// Script start
+
+
+--// Services
+--// Player variables
 local char = player.Character or player.CharacterAdded:Wait()
 
 local function safeFire(remote, ...)
@@ -157,44 +130,22 @@ end
 
 --// Match detector / lobby handling
 if not functions then
-    print("Not in match")
-    char:PivotTo(CFrame.new(-9, 61, 102))
-    tapKey(Enum.KeyCode.W)
-    tapKey(Enum.KeyCode.A)
-    tapKey(Enum.KeyCode.S)
-    tapKey(Enum.KeyCode.D)
-    task.wait(1)
-    safeFire(waitForChild(events, "CreateParty", 10), "Elevator6", 1, true)
-    task.wait(1)
-    safeFire(waitForChild(events, "StartElevator", 10), "Elevator6")
-    print("Attempted to teleport")
-    task.wait(3)
-    return
+	print("Not in match")
+	char:PivotTo(CFrame.new(-9, 61, 102))
+	tapKey(Enum.KeyCode.W)
+	tapKey(Enum.KeyCode.A)
+	tapKey(Enum.KeyCode.S)
+	tapKey(Enum.KeyCode.D)
+	task.wait(1)
+	safeFire(waitForChild(events, "CreateParty", 10), "Elevator6", 1, true)
+task.wait(1)
+safeFire(waitForChild(events, "StartElevator", 10), "Elevator6")
+	print("Attempted to teleport")
+	task.wait(3)
+	return
 else
-    print("In game")
+	print("In game")
 end
-
---========================================================================
--- [INTEGRATION 2/2] BACKGROUND AUTO-SKIP WAVE THREAD
---========================================================================
-local VoteSkipFunc = waitForChild(functions, "VoteSkip", 15)
-local autoSkipEnabled = true 
-
-if VoteSkipFunc then
-    task.spawn(function()
-        print("[Auto-Skip]: Background automation thread started successfully.")
-        while autoSkipEnabled do
-            local success, result = pcall(function()
-                return VoteSkipFunc:InvokeServer()
-            end)
-            task.wait(0.5) 
-        end
-        print("[Auto-Skip]: Background thread stopped.")
-    end)
-else
-    warn("[Autofarm Integration]: VoteSkip function not found, skipping background auto-skip loop initialization.")
-end
---========================================================================
 
 --// Match variables
 local mutatorEvent = waitForChild(events, "SlopMutator", 15)
@@ -204,9 +155,12 @@ local speedRemote = waitForChild(functions, "ChangeSpeed", 15)
 local upgradeRemote = waitForChild(functions, "UpgradeTower", 15)
 if not (mutatorEvent and cash and spawnRemote and speedRemote and upgradeRemote) then return end
 
-PlayerGui.ScreenOrientation = Enum.ScreenOrientation.LandscapeSensor
-local mutatorGui = waitForChild(PlayerGui, "SlopMutatorGui", 15)
-local gameGui = waitForChild(PlayerGui, "GameGui", 15)
+local playerGui = waitForChild(player, "PlayerGui", 15)
+if not playerGui then return end
+
+playerGui.ScreenOrientation = Enum.ScreenOrientation.LandscapeSensor
+local mutatorGui = waitForChild(playerGui, "SlopMutatorGui", 15)
+local gameGui = waitForChild(playerGui, "GameGui", 15)
 if not (mutatorGui and gameGui) then return end
 local buttons = waitForChild(mutatorGui, "MutatorVoting", 10)
 local endscreen = waitForChild(gameGui, "EndScreen", 10)
@@ -218,7 +172,7 @@ local targetFrame = endscreen
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TimerGui"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = PlayerGui
+screenGui.Parent = playerGui
 
 local textLabel = Instance.new("TextLabel")
 textLabel.Name = "TimerLabel"
@@ -233,9 +187,11 @@ textLabel.Parent = screenGui
 
 task.spawn(function()
     local startTime = os.clock()
+
     while not targetFrame.Visible do
         local elapsed = math.floor(os.clock() - startTime)
         textLabel.Text = tostring(elapsed)
+
         task.wait(0.1)
     end
 end)
@@ -268,26 +224,27 @@ local function deploy(towerData)
 end
 
 --// Tower upgrading
+
 local function upgrade(towerTable)
-    for _, towerData in ipairs(towerTable) do
-        local towerName = towerData[1]
-        local towerCFrame = towerData[2]
-        local variantName = towerData[4]
+	for _, towerData in ipairs(towerTable) do
+		local towerName = towerData[1]
+		local towerCFrame = towerData[2]
+		local variantName = towerData[4]
 
-        for _, towerInstance in ipairs(towersFolder:GetChildren()) do
-            if towerInstance.Name == towerName then
-                local towerPosition = towerInstance:GetPivot().Position
-                local targetPosition = towerCFrame.Position
+		for _, towerInstance in ipairs(towersFolder:GetChildren()) do
+			if towerInstance.Name == towerName then
+				local towerPosition = towerInstance:GetPivot().Position
+				local targetPosition = towerCFrame.Position
 
-                if (towerPosition - targetPosition).Magnitude < 2 then
+				if (towerPosition - targetPosition).Magnitude < 2 then
                     safeInvoke(upgradeRemote, towerInstance, variantName)
-                    task.wait(0.05)
+                    task.wait(0.05) -- yield between remote calls to avoid tight request loops
                     break
-                end
-            end
+				end
+			end
         end
     end
-    task.wait(0.15)
+    task.wait(0.15) -- always yield between upgrade passes
 end
 
 -- // mutator solver
@@ -299,89 +256,199 @@ local priority = {
 "Blackout",
 "Brainrot"
 }
+
 local function search()
-local found = {}
-for i, button in ipairs(buttons:GetChildren()) do
-if i >= 2 and i <= 4 and button:IsA("GuiObject") then
-table.insert(found, button)
+    local found = {}
+    for i, button in ipairs(buttons:GetChildren()) do
+        if i >= 2 and i <= 4 and button:IsA("GuiObject") then
+            table.insert(found, button)
+        end
+    end
+    return found
 end
-end
-return found
-end
+
 local function call()
-local foundButtons = search()
-for _, preferredName in ipairs(priority) do
-for _, button in ipairs(foundButtons) do
-if button.Name == preferredName then
-safeFire(mutatorEvent, "Vote", button.Name)
-return true
+    local foundButtons = search()
+    for _, preferredName in ipairs(priority) do
+        for _, button in ipairs(foundButtons) do
+            if button.Name == preferredName then
+                safeFire(mutatorEvent, "Vote", button.Name)
+                return true
+            end
+        end
+    end
+    warn("[Autofarm] No preferred mutator was found among the available voting buttons.")
+    return false
 end
-end
-end
-warn("[Autofarm] No preferred mutator was found among the available voting buttons.")
-return false
-end
-local sen = {"Star Egg Noob", CFrame.new(7, -77, 26), false, "Star Egg Noob Gold", {"Gold"}}
-local sen2 = {"Star Egg Noob", CFrame.new(7, -77, 23), false, "Star Egg Noob Gold", {"Gold"}}
-local sen3 = {"Star Egg Noob", CFrame.new(7, -77, 19), false, "Star Egg Noob Gold", {"Gold"}}
-local gs = {"Godly Sprinkler", CFrame.new(11, -77, 22), false, "Godly Sprinkler Rainbow #2", {"Rainbow"}}
-local astro = {"Astro Upgraded Titan Speaker Man", CFrame.new(12, -77, 14), false, "Astro Upgraded Titan Speaker Man #3", {}}
-local flower = {"Flowergirl Afterwind", CFrame.new(12, -77, 18), false, "Flowergirl Afterwind Rainbow", {"Rainbow"}}
-local flower2 = {"Flowergirl Afterwind", CFrame.new(7, -77, -2), false, "Flowergirl Afterwind Rainbow", {"Rainbow"}}
-local garg = {"Gargantuan Cyborg Cat", CFrame.new(16, -77, 4), false, "Gargantuan Cyborg Cat Gold", {"Gold"}}
-local ohio = {"The Ohio Final Boss", CFrame.new(7, -77, 17), false, "The Ohio Final Boss Rainbow #2", {"Rainbow"}}
-local ohio2 = {"The Ohio Final Boss", CFrame.new(7, -77, 14), false, "The Ohio Final Boss Rainbow #2", {"Rainbow"}}
-local All = {sen, sen2, sen3, gs, ohio, ohio2, garg, flower, flower2, astro}
+
+local sen = {
+"Star Egg Noob",
+CFrame.new(7, -77, 26),
+false,
+"Star Egg Noob Gold",
+{"Gold"}
+}
+
+local sen2 = {
+"Star Egg Noob",
+CFrame.new(7, -77, 23),
+false,
+"Star Egg Noob Gold",
+{"Gold"}
+}
+
+local sen3 = {
+"Star Egg Noob",
+CFrame.new(7, -77, 19),
+false,
+"Star Egg Noob Gold",
+{"Gold"}
+}
+
+
+local gs = {
+"Godly Sprinkler",
+CFrame.new(11, -77, 22),
+false,
+"Godly Sprinkler Rainbow #2",
+{"Rainbow"}
+}
+
+local astro = {
+"Astro Upgraded Titan Speaker Man",
+CFrame.new(12, -77, 14),
+false,
+"Astro Upgraded Titan Speaker Man #3",
+{}
+}
+
+local flower = {
+"Flowergirl Afterwind",
+CFrame.new(12, -77, 18),
+false,
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
+}
+
+local flower2 = {
+"Flowergirl Afterwind",
+CFrame.new(7, -77, -2),
+false,
+"Flowergirl Afterwind Rainbow",
+{"Rainbow"}
+}
+
+local garg = {
+"Gargantuan Cyborg Cat",
+CFrame.new(16, -77, 4),
+false,
+"Gargantuan Cyborg Cat Gold",
+{"Gold"}
+}
+
+local ohio = {
+"The Ohio Final Boss",
+CFrame.new(7, -77, 17),
+false,
+"The Ohio Final Boss Rainbow #2",
+{"Rainbow"}
+}
+
+local ohio2 = {
+"The Ohio Final Boss",
+CFrame.new(7, -77, 14),
+false,
+"The Ohio Final Boss Rainbow #2",
+{"Rainbow"}
+}
+
+
+local All = {
+sen,
+sen2,
+sen3,
+gs,
+ohio,
+ohio2,
+garg,
+flower,
+flower2,
+astro
+}
+
+--// Mode voting (safe if the player joins after a phase has ended)
+local voteGui = waitForChild(gameGui, "Voting", 10)
+local specialf = waitForChild(gameGui, "SpecialVoting", 10)
+local voteForMap = waitForChild(events, "VoteForMap", 5)
+local voteForComplication = waitForChild(events, "VoteForComplication", 5)
+local voteForSpecial = waitForChild(events, "VoteForSpecial", 5)
+
+-- Keep the existing map/complication choices and speed setting.
 task.wait(2)
 if voteGui and voteGui.Visible then
-safeFire(voteForMap, "Area 51")
-task.wait(8)
-safeInvoke(speedRemote, 6)
-safeFire(voteForComplication, "Chaos")
+    safeFire(voteForMap, "Area 51")
+    task.wait(8)
+    safeInvoke(speedRemote, 6)
+    safeFire(voteForComplication, "Chaos")
 else
-task.wait(1)
-safeInvoke(speedRemote, 6)
+    task.wait(1)
+    safeInvoke(speedRemote, 6)
 end
 safeInvoke(speedRemote, 6)
+
+-- Connect first, then inspect the current state so an already-visible GUI is not missed.
 local specialVoteSent = false
 local function trySpecialVote()
-if specialf and specialf.Visible and not specialVoteSent then
-specialVoteSent = true
-safeFire(voteForSpecial, "Pact")
-print("[Autofarm] Special voting visible; attempted Pact vote.")
-end
+    if specialf and specialf.Visible and not specialVoteSent then
+        specialVoteSent = true
+        safeFire(voteForSpecial, "Pact")
+        print("[Autofarm] Special voting visible; attempted Pact vote.")
+    end
 end
 if specialf then
-specialf:GetPropertyChangedSignal("Visible"):Connect(trySpecialVote)
-trySpecialVote()
+    specialf:GetPropertyChangedSignal("Visible"):Connect(trySpecialVote)
+    trySpecialVote()
 end
+
+-- Mutator voting can be skipped if joining late. Wait only a bounded amount of time.
+-- If the voting GUI never appears, continue to the placement sequence instead of hanging forever.
 local mutatorDeadline = os.clock() + 12
 while not buttons.Visible and os.clock() < mutatorDeadline do
-task.wait(0.2)
+    task.wait(0.2)
 end
 if buttons.Visible then
-call()
-print("[Autofarm] Mutator vote attempted.")
+    call()
+    print("[Autofarm] Mutator vote attempted.")
 else
-warn("[Autofarm] Mutator voting did not become visible; assuming the phase was skipped.")
+    warn("[Autofarm] Mutator voting did not become visible; assuming the phase was skipped.")
 end
+
 -- // rogue cards
 local Event = waitForChild(events, "RogueCard", 10)
 if not Event then return end
+
 local offerCount = 0
+
 Event.OnClientEvent:Connect(function(action, data)
-if action ~= "Offer" then return end
-offerCount += 1
-local pickNumber = 100000 + offerCount
-print("Offer:", offerCount)
-print("Sending Pick:", pickNumber)
-safeFire(Event, "Pick", pickNumber, 1)
+    if action ~= "Offer" then
+        return
+    end
+
+    offerCount += 1
+
+    local pickNumber = 100000 + offerCount
+
+    print("Offer:", offerCount)
+    print("Sending Pick:", pickNumber)
+
+    safeFire(Event, "Pick", pickNumber, 1)
 end)
+
 -- // placement sequence
 repeat task.wait() until cash.Value >= 650
-deploy(sen)
+	deploy(sen)
 repeat task.wait() until cash.Value >= 650
-deploy(sen2)
+ deploy(sen2)
 repeat task.wait() until cash.Value >= 650
 deploy(sen3)
 repeat task.wait() until cash.Value >= 1500
@@ -401,3 +468,5 @@ deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
 deploy(flower2)
 repeat upgrade(All) until wave.Value >= 30
+
+-- // end of the script
