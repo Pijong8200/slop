@@ -1,22 +1,21 @@
 repeat task.wait() until game:IsLoaded()
 
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local StarterGui = game:GetService("StarterGui")
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local player = Players.LocalPlayer
+local vim = game:GetService("VirtualInputManager")
+while not vim do
+    task.wait(0.5)
+    vim = game:GetService("VirtualInputManager")
+end
 
--- Re-running the script should not stack duplicate utility GUIs.
-local CoreGui = game:GetService("CoreGui")
-for _, guiName in ipairs({"QueueKillSwitch", "TimerGui"}) do
-    local existing = (guiName == "TimerGui" and player:WaitForChild("PlayerGui") or CoreGui):FindFirstChild(guiName)
-    if existing then existing:Destroy() end
+local starterGui = game:GetService("StarterGui")
+while not starterGui do
+    task.wait(0.5)
+    starterGui = game:GetService("StarterGui")
 end
 
 pcall(function()
-    StarterGui:SetCore("SendNotification", {
+    starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v2.3 Space Chaos loaded.",
+        Text = "Build v1 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -41,6 +40,7 @@ if queue then
 end
 
 -- 2. Create the Tiny Kill Switch Button
+local CoreGui = game:GetService("CoreGui")
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "QueueKillSwitch"
 screenGui.Parent = CoreGui
@@ -63,16 +63,10 @@ uiCorner.Parent = killButton
 -- Button Functionality
 killButton.MouseButton1Click:Connect(function()
     if writefile then
-        local ok, err = pcall(writefile, "cancel_queue.txt", "true")
-        if ok then
-            killButton.Text = "KILLED!"
-            killButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            killButton.Active = false
-        else
-            warn("[Autofarm] Could not write queue cancellation file:", err)
-        end
-    else
-        warn("[Autofarm] Executor does not support writefile; queue cannot be cancelled this way.")
+        writefile("cancel_queue.txt", "true")
+        killButton.Text = "KILLED!"
+        killButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Turn gray to show it worked
+        killButton.Active = false
     end
 end)
 
@@ -85,47 +79,23 @@ end)
 
 
 --// Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Players = game:GetService("Players")
+
 --// Player variables
+local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 
-local function safeFire(remote, ...)
-    if not remote then return false, "Remote is missing" end
-    local args = table.pack(...)
-    local ok, err = pcall(function() remote:FireServer(table.unpack(args, 1, args.n)) end)
-    if not ok then warn("[Autofarm] FireServer failed:", remote:GetFullName(), err) end
-    return ok, err
-end
-
-local function safeInvoke(remote, ...)
-    if not remote then return false, "Remote is missing" end
-    local args = table.pack(...)
-    local packed = table.pack(pcall(function() return remote:InvokeServer(table.unpack(args, 1, args.n)) end))
-    if not packed[1] then
-        warn("[Autofarm] InvokeServer failed:", remote:GetFullName(), packed[2])
-        return false, packed[2]
-    end
-    return true, table.unpack(packed, 2, packed.n)
-end
-
-local function waitForChild(parent, name, timeout)
-    local child = parent:WaitForChild(name, timeout or 15)
-    if not child then warn("[Autofarm] Timed out waiting for", parent:GetFullName() .. "." .. name) end
-    return child
-end
-
 --// Lobby variables
-local events = waitForChild(ReplicatedStorage, "Events", 15)
-if not events then return end
-local functions = waitForChild(ReplicatedStorage, "Functions", 0.5)
+local events = ReplicatedStorage:WaitForChild("Events")
+local functions = ReplicatedStorage:WaitForChild("Functions", 0.1)
 
 --// Input manager
 local function tapKey(keyCode)
-    local ok, err = pcall(function()
-        VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
-        task.wait(0.3)
-        VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
-    end)
-    if not ok then warn("[Autofarm] Key input failed:", keyCode.Name, err) end
+	VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
+	task.wait(0.3)
+	VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
 end
 
 --// Match detector / lobby handling
@@ -137,9 +107,9 @@ if not functions then
 	tapKey(Enum.KeyCode.S)
 	tapKey(Enum.KeyCode.D)
 	task.wait(1)
-	safeFire(waitForChild(events, "CreateParty", 10), "Elevator6", 1, true)
+	events:WaitForChild("CreateParty"):FireServer("Elevator6", 1, true)
 task.wait(1)
-safeFire(waitForChild(events, "StartElevator", 10), "Elevator6")
+events:WaitForChild("StartElevator"):FireServer("Elevator6")
 	print("Attempted to teleport")
 	task.wait(3)
 	return
@@ -148,23 +118,16 @@ else
 end
 
 --// Match variables
-local mutatorEvent = waitForChild(events, "SlopMutator", 15)
-local cash = waitForChild(player, "Cash", 15)
-local spawnRemote = waitForChild(functions, "SpawnTower", 15)
-local speedRemote = waitForChild(functions, "ChangeSpeed", 15)
-local upgradeRemote = waitForChild(functions, "UpgradeTower", 15)
-if not (mutatorEvent and cash and spawnRemote and speedRemote and upgradeRemote) then return end
-
-local playerGui = waitForChild(player, "PlayerGui", 15)
-if not playerGui then return end
-
+local mutatorEvent = events:WaitForChild("SlopMutator")
+local cash = player:WaitForChild("Cash")
+local spawnRemote = functions:WaitForChild("SpawnTower")
+local speedRemote = functions:WaitForChild("ChangeSpeed")
+local upgradeRemote = functions:WaitForChild("UpgradeTower")
+local playerGui = player:WaitForChild("PlayerGui")
 playerGui.ScreenOrientation = Enum.ScreenOrientation.LandscapeSensor
-local mutatorGui = waitForChild(playerGui, "SlopMutatorGui", 15)
-local gameGui = waitForChild(playerGui, "GameGui", 15)
-if not (mutatorGui and gameGui) then return end
-local buttons = waitForChild(mutatorGui, "MutatorVoting", 10)
-local endscreen = waitForChild(gameGui, "EndScreen", 10)
-if not (buttons and endscreen) then return end
+local buttons = playerGui:WaitForChild("SlopMutatorGui").MutatorVoting
+local gameGui = playerGui:WaitForChild("GameGui")
+local endscreen = gameGui:WaitForChild("EndScreen")
 
 -- timer
 local targetFrame = endscreen
@@ -196,31 +159,20 @@ task.spawn(function()
     end
 end)
 
-local towersFolder = waitForChild(workspace, "Towers", 15)
-local infoFolder = waitForChild(workspace, "Info", 15)
-local wave = infoFolder and waitForChild(infoFolder, "Wave", 15)
-if not (towersFolder and wave) then return end
+local towersFolder = workspace:WaitForChild("Towers")
+local wave = workspace:WaitForChild("Info"):WaitForChild("Wave")
 
 --// End screen retry
-local endDecisionSent = false
-local function handleEndScreen()
-    if endscreen.Visible and not endDecisionSent then
-        endDecisionSent = true
-        safeFire(waitForChild(events, "EndDecision", 5), true)
-        print("[Autofarm] End screen detected; sent end decision.")
-    elseif not endscreen.Visible then
-        endDecisionSent = false
-    end
-end
-endscreen:GetPropertyChangedSignal("Visible"):Connect(handleEndScreen)
-handleEndScreen()
+endscreen:GetPropertyChangedSignal("Visible"):Connect(function()
+	if endscreen.Visible then
+		events:WaitForChild("EndDecision"):FireServer(true)
+		print("End screen detected! Fired EndDecision.")
+	end
+end)
 
 --// Tower deployment
 local function deploy(towerData)
-    local ok, result = safeInvoke(spawnRemote, unpack(towerData))
-    if not ok then warn("[Autofarm] Deployment failed for", tostring(towerData[1])) end
-    task.wait(0.15)
-    return ok, result
+	return spawnRemote:InvokeServer(unpack(towerData))
 end
 
 --// Tower upgrading
@@ -237,14 +189,12 @@ local function upgrade(towerTable)
 				local targetPosition = towerCFrame.Position
 
 				if (towerPosition - targetPosition).Magnitude < 2 then
-                    safeInvoke(upgradeRemote, towerInstance, variantName)
-                    task.wait(0.05) -- yield between remote calls to avoid tight request loops
-                    break
+					upgradeRemote:InvokeServer(towerInstance, variantName)
+					break
 				end
 			end
-        end
-    end
-    task.wait(0.15) -- always yield between upgrade passes
+		end
+	end
 end
 
 -- // mutator solver
@@ -258,27 +208,28 @@ local priority = {
 }
 
 local function search()
-    local found = {}
-    for i, button in ipairs(buttons:GetChildren()) do
-        if i >= 2 and i <= 4 and button:IsA("GuiObject") then
-            table.insert(found, button)
-        end
-    end
-    return found
+local found = {}
+for i, button in ipairs(buttons:GetChildren()) do
+if i >= 2 and i <= 4 then
+table.insert(found, button)
+end
+end
+return found
 end
 
 local function call()
-    local foundButtons = search()
-    for _, preferredName in ipairs(priority) do
-        for _, button in ipairs(foundButtons) do
-            if button.Name == preferredName then
-                safeFire(mutatorEvent, "Vote", button.Name)
-                return true
-            end
-        end
-    end
-    warn("[Autofarm] No preferred mutator was found among the available voting buttons.")
-    return false
+local foundButtons = search()
+for _, n in ipairs(priority) do
+for _, v in ipairs(foundButtons) do
+if v.Name == n then
+mutatorEvent:FireServer(
+    "Vote",
+    v.Name
+)
+return
+end
+end
+end
 end
 
 local sen = {
@@ -376,56 +327,38 @@ flower2,
 astro
 }
 
---// Mode voting (safe if the player joins after a phase has ended)
-local voteGui = waitForChild(gameGui, "Voting", 10)
-local specialf = waitForChild(gameGui, "SpecialVoting", 10)
-local voteForMap = waitForChild(events, "VoteForMap", 5)
-local voteForComplication = waitForChild(events, "VoteForComplication", 5)
-local voteForSpecial = waitForChild(events, "VoteForSpecial", 5)
-
--- Keep the existing map/complication choices and speed setting.
-task.wait(2)
-if voteGui and voteGui.Visible then
-    safeFire(voteForMap, "Area 51")
-    task.wait(8)
-    safeInvoke(speedRemote, 6)
-    safeFire(voteForComplication, "Chaos")
+--// Mode voting
+local voteGui = gameGui:WaitForChild("Voting")
+voteGui:GetPropertyChangedSignal("Visible"):Connect(function()
+if voteGui.Visible then
+	events:WaitForChild("VoteForMap"):FireServer("Area 51")
+task.wait(8)
+speedRemote:InvokeServer(6)
+events:WaitForChild("VoteForComplication"):FireServer("Chaos")
 else
-    task.wait(1)
-    safeInvoke(speedRemote, 6)
-end
-safeInvoke(speedRemote, 6)
-
--- Connect first, then inspect the current state so an already-visible GUI is not missed.
-local specialVoteSent = false
-local function trySpecialVote()
-    if specialf and specialf.Visible and not specialVoteSent then
-        specialVoteSent = true
-        safeFire(voteForSpecial, "Pact")
-        print("[Autofarm] Special voting visible; attempted Pact vote.")
-    end
-end
-if specialf then
-    specialf:GetPropertyChangedSignal("Visible"):Connect(trySpecialVote)
-    trySpecialVote()
+task.wait(1)
+speedRemote:InvokeServer(6)
 end
 
--- Mutator voting can be skipped if joining late. Wait only a bounded amount of time.
--- If the voting GUI never appears, continue to the placement sequence instead of hanging forever.
-local mutatorDeadline = os.clock() + 12
-while not buttons.Visible and os.clock() < mutatorDeadline do
-    task.wait(0.2)
+--// SpecialMode
+local specialf = gameGui:WaitForChild("SpecialVoting")
+specialf:GetPropertyChangedSignal("Visible"):Connect(function()
+if specialf.Visible then
+events:WaitForChild("VoteForSpecial"):FireServer("Pact")
+else
+task.wait(1) 
 end
+end)
+
+--// Mutator Aelector
+buttons:GetPropertyChangedSignal("Visible"):Connect(function()
 if buttons.Visible then
-    call()
-    print("[Autofarm] Mutator vote attempted.")
-else
-    warn("[Autofarm] Mutator voting did not become visible; assuming the phase was skipped.")
+call()
 end
+end)
 
--- // rogue cards
-local Event = waitForChild(events, "RogueCard", 10)
-if not Event then return end
+--// Special Cards
+local Event = game:GetService("ReplicatedStorage").Events.RogueCard
 
 local offerCount = 0
 
@@ -441,7 +374,11 @@ Event.OnClientEvent:Connect(function(action, data)
     print("Offer:", offerCount)
     print("Sending Pick:", pickNumber)
 
-    safeFire(Event, "Pick", pickNumber, 1)
+    Event:FireServer(
+        "Pick",
+        pickNumber,
+        1
+    )
 end)
 
 -- // placement sequence
@@ -462,7 +399,7 @@ deploy(ohio2)
 repeat upgrade(All) until cash.Value >= 100000
 deploy(astro)
 task.wait(0.5)
-safeFire(waitForChild(events, "AbilityAuto", 5), "OverCharge", true)
+events:WaitForChild("AbilityAuto"):FireServer("OverCharge", true)
 repeat upgrade(All) until cash.Value >= 199999
 deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
