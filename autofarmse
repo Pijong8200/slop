@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.5 Space Chaos loaded.",
+        Text = "Build v1.6 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -340,7 +340,7 @@ end
 
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
-task.wait(4)
+task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("Area 51")
 task.wait(8)
