@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1 Space Chaos loaded.",
+        Text = "Build v1.1 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -233,18 +233,18 @@ end
 end
 
 local sen = {
-"Star Egg Noob",
+"Moon Blossom",
 CFrame.new(7, -77, 26),
 false,
-"Star Egg Noob Gold",
+"Moon Blossom",
 {"Gold"}
 }
 
 local sen2 = {
-"Star Egg Noob",
+"Moon Blossom",
 CFrame.new(7, -77, 23),
 false,
-"Star Egg Noob Gold",
+"Moon Blossom",
 {"Gold"}
 }
 
@@ -317,7 +317,6 @@ false,
 local All = {
 sen,
 sen2,
-sen3,
 gs,
 ohio,
 ohio2,
@@ -388,12 +387,10 @@ Event.OnClientEvent:Connect(function(action, data)
 end)
 
 -- // placement sequence
-repeat task.wait() until cash.Value >= 650
+repeat task.wait() until cash.Value >= 480
 	deploy(sen)
-repeat task.wait() until cash.Value >= 650
+repeat task.wait() until cash.Value >= 480
  deploy(sen2)
-repeat task.wait() until cash.Value >= 650
-deploy(sen3)
 repeat task.wait() until cash.Value >= 1500
 deploy(gs)
 repeat upgrade(All) until cash.Value >= 7350
