@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.3 Space Chaos loaded.",
+        Text = "Build v1.4 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -327,12 +327,16 @@ flower2,
 astro
 }
 
---// Mutator Handler
+--// Mutator Handle
+if buttons then
+call()
+else
 buttons:GetPropertyChangedSignal("Visible"):Connect(function()
 if buttons.Visible then
 call()
 end
 end)
+end
 
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
