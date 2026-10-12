@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.2 Space Chaos loaded.",
+        Text = "Build v1.3 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -327,11 +327,13 @@ astro
 }
 
 --// Mutator Handle
+task.wait(1)
 if buttons then
 call()
 else
 buttons:GetPropertyChangedSignal("Visible"):Connect(function()
 if buttons.Visible then
+task.wait(1)
 call()
 end
 end)
