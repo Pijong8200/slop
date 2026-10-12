@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.3 Space Chaos loaded.",
+        Text = "Build v1.4 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -326,17 +326,19 @@ flower2,
 astro
 }
 
---// Mutator Handle
+-- mutator voting
 task.wait(1)
-if buttons then
-call()
-else
-buttons:GetPropertyChangedSignal("Visible"):Connect(function()
-if buttons.Visible then
-task.wait(1)
-call()
-end
-end)
+
+if buttons and buttons.Visible then
+    task.wait(1)
+    call()
+elseif buttons then
+    buttons:GetPropertyChangedSignal("Visible"):Connect(function()
+        if buttons.Visible then
+            task.wait(1)
+            call()
+        end
+    end)
 end
 
 --// Mode voting
