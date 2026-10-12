@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.2 Space Chaos loaded.",
+        Text = "Build v1.3 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -327,9 +327,16 @@ flower2,
 astro
 }
 
+--// Mutator Handler
+buttons:GetPropertyChangedSignal("Visible"):Connect(function()
+if buttons.Visible then
+call()
+end
+end)
+
 --// Mode voting
 local voteGui = gameGui:WaitForChild("Voting")
-task.wait(2)
+task.wait(4)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("Area 51")
 task.wait(8)
@@ -347,13 +354,6 @@ if specialf.Visible then
 events:WaitForChild("VoteForSpecial"):FireServer("Pact")
 else
 task.wait(1) 
-end
-end)
-
---// Mutator Aelector
-buttons:GetPropertyChangedSignal("Visible"):Connect(function()
-if buttons.Visible then
-call()
 end
 end)
 
