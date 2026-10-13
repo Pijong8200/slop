@@ -16,7 +16,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v3.1 Raid Hard loaded.",
+        Text = "Build v1 Raid Hard loaded.",
         Duration = 5
     })
 end)
@@ -487,7 +487,7 @@ local fg = {
 "Flowergirl Afterwind",
 CFrame.new(7, -49, 50),
 false,
-"Flowergirl Afterwind Rainbow",
+"Flowergirl Afterwind Rainbow #2",
 {"Rainbow"}
   }
 
@@ -495,7 +495,7 @@ local fg2 = {
 "Flowergirl Afterwind",
 CFrame.new(-10, -49, -1),
 false,
-"Flowergirl Afterwind Rainbow",
+"Flowergirl Afterwind Rainbow #2",
 {"Rainbow"}
 }
 
@@ -503,7 +503,7 @@ local fg3 = {
 "Flowergirl Afterwind",
 CFrame.new(-10, -49, -1),
 false,
-"Flowergirl Afterwind Rainbow",
+"Flowergirl Afterwind Rainbow #2",
 {"Rainbow"}
 }
 
@@ -511,7 +511,7 @@ local fgr2 = {
 "Flowergirl Afterwind",
 CFrame.new(-0, -78, -26),
 false,
-"Flowergirl Afterwind Rainbow",
+"Flowergirl Afterwind Rainbow #2",
 {"Rainbow"}
 }
 
@@ -519,7 +519,7 @@ local fgr3 = {
 "Flowergirl Afterwind",
 CFrame.new(21, -53, -26),
 false,
-"Flowergirl Afterwind Rainbow",
+"Flowergirl Afterwind Rainbow #2",
 {"Rainbow"}
 }
 
@@ -527,7 +527,7 @@ local fgr4 = {
 "Flowergirl Afterwind",
 CFrame.new(57, -52, 20),
 false,
-"Flowergirl Afterwind Rainbow",
+"Flowergirl Afterwind Rainbow #2",
 {"Rainbow"}
 }
 
@@ -559,7 +559,7 @@ local gs = {
 "Godly Sprinkler",
 CFrame.new(7, -49, 47),
 false,
-"Godly Sprinkler Rainbow",
+"Godly Sprinkler Rainbow #2",
 {"Rainbow"}
 }
 
@@ -567,7 +567,7 @@ local gsr2 = {
 "Godly Sprinkler",
 CFrame.new(-3, -78, -26),
 false,
-"Godly Sprinkler Rainbow",
+"Godly Sprinkler Rainbow #2",
 {"Rainbow"}
 }
 
@@ -575,7 +575,7 @@ local gsr3 = {
 "Godly Sprinkler",
 CFrame.new(24, -53, -29),
 false,
-"Godly Sprinkler Rainbow",
+"Godly Sprinkler Rainbow #2",
 {"Rainbow"}
 }
 
@@ -583,7 +583,7 @@ local gsr4 = {
 "Godly Sprinkler",
 CFrame.new(58, -51, 23),
 false,
-"Godly Sprinkler Rainbow",
+"Godly Sprinkler Rainbow #2",
 {"Rainbow"}
 }
 
