@@ -660,7 +660,7 @@ task.wait(2)
 if voteGui.Visible then
 	events:WaitForChild("VoteForMap"):FireServer("Raid")
 task.wait(8)
-speedRemote:InvokeServer(6)	events:WaitForChild("VoteForComplication"):FireServer("Hard")
+speedRemote:InvokeServer(6)	events:WaitForChild("VoteForComplication"):FireServer("Normal")
 
 else
 	task.wait(1)
