@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.4 Space Chaos loaded.",
+        Text = "Build v1 Space Chaos loaded.",
         Duration = 5
     })
 end)
@@ -199,9 +199,11 @@ end
 
 -- // mutator solver
 local priority = {
-"Speedrun",
 "GlassBase",
+"Speedrun",
 "ArmoredSlop",
+"Bankrupt",
+"Gigantism",
 "TinySlop",
 "Blackout",
 "Brainrot"
