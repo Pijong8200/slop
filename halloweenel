@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v0.2 Halloween EL Chaos loaded.",
+        Text = "Build v0.3 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -35,7 +35,7 @@ if queue then
             return -- Stop execution completely
         end
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/autofarmse"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/halloweenel"))()
     ]])
 end
 
