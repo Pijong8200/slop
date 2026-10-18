@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v0.4 Halloween EL Chaos loaded.",
+        Text = "Build v0.5 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -235,7 +235,7 @@ end
 
 local sen = {
 "Star Egg Noob",
-CFrame.new(66, -44, -7),
+CFrame.new(65, -44, -7),
 false,
 "Star Egg Noob Gold",
 {"Gold"}
@@ -243,7 +243,7 @@ false,
 
 local sen2 = {
 "Star Egg Noob",
-CFrame.new(66, -44, -8),
+CFrame.new(65, -44, -8),
 false,
 "Star Egg Noob Gold",
 {"Gold"}
@@ -251,7 +251,7 @@ false,
 
 local sen3 = {
 "Star Egg Noob",
-CFrame.new(66, -44, -9),
+CFrame.new(65, -44, -9),
 false,
 "Star Egg Noob Gold",
 {"Gold"}
@@ -268,7 +268,7 @@ false,
 
 local astro = {
 "Astro Upgraded Titan Speaker Man",
-CFrame.new(48, -44, -12),
+CFrame.new(47, -44, -13),
 false,
 "Astro Upgraded Titan Speaker Man #3",
 {}
@@ -292,7 +292,7 @@ false,
 
 local garg = {
 "Gargantuan Cyborg Cat",
-CFrame.new(48, -44, 14),
+CFrame.new(41, -44, -19),
 false,
 "Gargantuan Cyborg Cat Gold",
 {"Gold"}
@@ -308,7 +308,7 @@ false,
 
 local ohio2 = {
 "The Ohio Final Boss",
-CFrame.new(66, -44, -4),
+CFrame.new(60, -44, -10),
 false,
 "The Ohio Final Boss Rainbow #2",
 {"Rainbow"}
