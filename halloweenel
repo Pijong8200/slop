@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1 Space Chaos loaded.",
+        Text = "Build v0.1 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -107,9 +107,9 @@ if not functions then
 	tapKey(Enum.KeyCode.S)
 	tapKey(Enum.KeyCode.D)
 	task.wait(1)
-	events:WaitForChild("CreateParty"):FireServer("Elevator6", 1, true)
+	events:WaitForChild("CreateParty"):FireServer("Elevator8", 1, true)
 task.wait(1)
-events:WaitForChild("StartElevator"):FireServer("Elevator6")
+events:WaitForChild("StartElevator"):FireServer("Elevator8")
 	print("Attempted to teleport")
 	task.wait(3)
 	return
