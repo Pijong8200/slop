@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v0.6 Halloween EL Chaos loaded.",
+        Text = "Build v0.7 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -388,7 +388,7 @@ Event.OnClientEvent:Connect(function(action, data)
         1
     )
 end)
-local chaosbar = playerGui:WaitForChild("ChaosHud")
+local chaosbar = playerGui:WaitForChild("ChaosHUD")
 if chaosbar then
 chaosbar.Enabled = false
 end
