@@ -420,6 +420,6 @@ repeat upgrade(All) until cash.Value >= 199999
  deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
  deploy(flower2)
-repeat upgrade(All) until wave.Value >= 30
-
+repeat upgrade(All) until wave.Value >= 51
+events:FireServer("LeaveVote")
 -- // end of the script
