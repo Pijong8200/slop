@@ -199,6 +199,7 @@ end
 
 -- // mutator solver
 local priority = {
+"Speedrun",
 "GlassBase",
 "Speedrun",
 "ArmoredSlop",
