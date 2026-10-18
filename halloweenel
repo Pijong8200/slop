@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v0.1 Halloween EL Chaos loaded.",
+        Text = "Build v0.2 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -234,18 +234,18 @@ end
 end
 
 local sen = {
-"Moon Blossom",
+"Star Egg Noob",
 CFrame.new(66, -43, -7),
 false,
-"Moon Blossom",
+"Star Egg Noob Gold",
 {"Gold"}
 }
 
 local sen2 = {
-"Moon Blossom",
+"Star Egg Noob",
 CFrame.new(66, -43, -8),
 false,
-"Moon Blossom",
+"Star Egg Noob Gold",
 {"Gold"}
 }
 
@@ -292,7 +292,7 @@ false,
 
 local garg = {
 "Gargantuan Cyborg Cat",
-CFrame.new(16, -77, 4),
+CFrame.new(48, -43, 14),
 false,
 "Gargantuan Cyborg Cat Gold",
 {"Gold"}
@@ -346,7 +346,7 @@ end
 local voteGui = gameGui:WaitForChild("Voting")
 task.wait(2)
 if voteGui.Visible then
-	events:WaitForChild("VoteForMap"):FireServer("Area 51")
+	events:WaitForChild("VoteForMap"):FireServer("HalloweenEndless")
 task.wait(8)
 speedRemote:InvokeServer(6)
 events:WaitForChild("VoteForComplication"):FireServer("Chaos")
@@ -390,26 +390,28 @@ Event.OnClientEvent:Connect(function(action, data)
 end)
 
 -- // placement sequence
-repeat task.wait() until cash.Value >= 480
+repeat task.wait() until cash.Value >= 650
 	deploy(sen)
-repeat task.wait() until cash.Value >= 480
+repeat task.wait() until cash.Value >= 650
  deploy(sen2)
+repeat task.wait() until cash.Value >= 650
+ deploy(sen3)
 repeat task.wait() until cash.Value >= 1500
-deploy(gs)
+ deploy(gs)
 repeat upgrade(All) until cash.Value >= 7350
-deploy(flower)
+ deploy(flower)
 repeat upgrade(All) until cash.Value >= 9999
-deploy(ohio)
+ deploy(ohio)
 repeat upgrade(All) until cash.Value >= 9999
-deploy(ohio2)
+ deploy(ohio2)
 repeat upgrade(All) until cash.Value >= 100000
-deploy(astro)
+ deploy(astro)
 task.wait(0.5)
 events:WaitForChild("AbilityAuto"):FireServer("OverCharge", true)
 repeat upgrade(All) until cash.Value >= 199999
-deploy(garg)
+ deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
-deploy(flower2)
+ deploy(flower2)
 repeat upgrade(All) until wave.Value >= 30
 
 -- // end of the script
