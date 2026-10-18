@@ -268,7 +268,7 @@ false,
 
 local astro = {
 "Astro Upgraded Titan Speaker Man",
-CFrame.new(47, -44, -13),
+CFrame.new(37, -43, 2),
 false,
 "Astro Upgraded Titan Speaker Man #3",
 {}
