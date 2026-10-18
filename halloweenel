@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v0.5 Halloween EL Chaos loaded.",
+        Text = "Build v0.6 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -388,6 +388,14 @@ Event.OnClientEvent:Connect(function(action, data)
         1
     )
 end)
+local chaosbar = playerGui:WaitForChild("ChaosHud")
+if chaosbar then
+chaosbar.Enabled = false
+end
+local notif = gameGui:WaitForChild("Notifications")
+if notif then
+notif.Visible = false
+end
 
 -- // placement sequence
 repeat task.wait() until cash.Value >= 650
