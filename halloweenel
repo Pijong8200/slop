@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v0.8 Halloween EL Chaos loaded.",
+        Text = "Build v1 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -162,13 +162,55 @@ end)
 local towersFolder = workspace:WaitForChild("Towers")
 local wave = workspace:WaitForChild("Info"):WaitForChild("Wave")
 
+
+
 --// End screen retry
+local fileName = "wincounter.txt"
+
+local wins = 0
+local losses = 0
+
+-- Load saved counters
+if isfile(fileName) then
+    local success, data = pcall(readfile, fileName)
+
+    if success and data then
+        local savedWins, savedLosses =
+            data:match("Wins: (%d+)\nLosses: (%d+)")
+
+        wins = tonumber(savedWins) or 0
+        losses = tonumber(savedLosses) or 0
+    end
+end
+
+local function saveCounters()
+    writefile(fileName, string.format(
+        "Wins: %d\nLosses: %d\n",
+        wins,
+        losses
+    ))
+end
+
 endscreen:GetPropertyChangedSignal("Visible"):Connect(function()
-	if endscreen.Visible then
-		events:WaitForChild("EndDecision"):FireServer(true)
-		print("End screen detected! Fired EndDecision.")
-	end
+    if endscreen.Visible then
+        events:WaitForChild("EndDecision"):FireServer(true)
+
+        if wave.Value < 50 then
+            losses = losses + 1
+            print("Lost! Total losses:", losses)
+        elseif wave.Value > 50 then
+            wins = wins + 1
+            print("Won! Total wins:", wins)
+        else
+            print("Wave is exactly 50; no result counted.")
+        end
+
+        saveCounters()
+        print("End screen detected! Fired EndDecision.")
+    end
 end)
+
+
 
 --// Tower deployment
 local function deploy(towerData)
