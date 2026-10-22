@@ -243,10 +243,6 @@ end
 local priority = {
 "Speedrun",
 "GlassBase",
-"Speedrun",
-"ArmoredSlop",
-"Gigantism",
-"Boss Rush",
 "Regeneration",
 "TinySlop",
 "Blackout",
