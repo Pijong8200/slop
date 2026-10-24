@@ -492,5 +492,17 @@ repeat upgrade(All) until wave.Value >= 51
 events:WaitForChild("LeaveVote"):FireServer()
 end
 
+start()
+
+local rebound = false
+
+wave:GetPropertyChangedSignal("Value"):Connect(function()
+    if wave.Value == 0 and not rebound then
+        rebound = true
+        start()
+    elseif wave.Value ~= 0 then
+        rebound = false
+    end
+end)
 
 -- // end of the script
