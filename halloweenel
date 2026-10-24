@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.1 Halloween EL Chaos loaded.",
+        Text = "Build v1.2 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -392,11 +392,14 @@ task.wait(1)
 if buttons and buttons.Visible then
     task.wait(1)
     call()
+    task.wait(1)
+    start()
 elseif buttons then
     buttons:GetPropertyChangedSignal("Visible"):Connect(function()
         if buttons.Visible then
             task.wait(1)
             call()
+            start()
         end
     end)
 end
@@ -489,11 +492,5 @@ repeat upgrade(All) until wave.Value >= 51
 events:WaitForChild("LeaveVote"):FireServer()
 end
 
-start()
 
-wave:GetPropertyChangedSignal("Value"):Connect(function()
-if wave and wave.Value == 0 then
-start()
-end
-end)
 -- // end of the script
