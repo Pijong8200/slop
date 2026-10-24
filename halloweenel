@@ -494,6 +494,7 @@ start()
 wave:GetPropertyChangedSignal("Value"):Connect(function()
 if wave and wave.Value == 0 then
 start()
+end
 )
 
 -- // end of the script
