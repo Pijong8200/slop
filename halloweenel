@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1 Halloween EL Chaos loaded.",
+        Text = "Build v1.1 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -274,30 +274,45 @@ end
 end
 end
 
-local sen = {
-"Star Egg Noob",
-CFrame.new(65, -44, -7),
+local totm = {
+"Trick-or-Treat TV Man",
+CFrame.new(33, -43, 3),
 false,
-"Star Egg Noob Gold",
-{"Gold"}
+"Trick-or-Treat TV Man",
+{"Rainbow"}
 }
 
-local sen2 = {
-"Star Egg Noob",
-CFrame.new(65, -44, -8),
+local totm2 = {
+"Trick-or-Treat TV Man",
+CFrame.new(31, -43, 3),
 false,
-"Star Egg Noob Gold",
-{"Gold"}
+"Trick-or-Treat TV Man",
+{"Rainbow"}
 }
 
-local sen3 = {
-"Star Egg Noob",
-CFrame.new(65, -44, -9),
+local totm3 = {
+"Trick-or-Treat TV Man",
+CFrame.new(29, -43, 3),
 false,
-"Star Egg Noob Gold",
-{"Gold"}
+"Trick-or-Treat TV Man",
+{"Rainbow"}
 }
 
+local totm4 = {
+"Trick-or-Treat TV Man",
+CFrame.new(27, -43, 3),
+false,
+"Trick-or-Treat TV Man",
+{"Rainbow"}
+}
+
+local totm5 = {
+"Trick-or-Treat TV Man",
+CFrame.new(25, -43, 3),
+false,
+"Trick-or-Treat TV Man",
+{"Rainbow"}
+}
 
 local gs = {
 "Godly Sprinkler",
@@ -307,11 +322,11 @@ false,
 {"Rainbow"}
 }
 
-local astro = {
-"Astro Upgraded Titan Speaker Man",
+local clark = {
+"Captain Clark",
 CFrame.new(37, -43, 2),
 false,
-"Astro Upgraded Titan Speaker Man #3",
+"Captain Clark",
 {}
 }
 
@@ -335,8 +350,8 @@ local garg = {
 "Gargantuan Cyborg Cat",
 CFrame.new(41, -44, -19),
 false,
-"Gargantuan Cyborg Cat Gold",
-{"Gold"}
+"Gargantuan Cyborg Cat Rainbow",
+{"Rainbow"}
 }
 
 local ohio = {
@@ -357,8 +372,11 @@ false,
 
 
 local All = {
-sen,
-sen2,
+totm,
+totm2,
+totm3,
+totm4,
+totm5,
 gs,
 ohio,
 ohio2,
@@ -429,6 +447,7 @@ Event.OnClientEvent:Connect(function(action, data)
         1
     )
 end)
+
 local chaosbar = playerGui:WaitForChild("ChaosHUD")
 if chaosbar then
 chaosbar.Enabled = false
@@ -439,28 +458,42 @@ notif.Visible = false
 end
 
 -- // placement sequence
-repeat task.wait() until cash.Value >= 650
-	deploy(sen)
-repeat task.wait() until cash.Value >= 650
- deploy(sen2)
-repeat task.wait() until cash.Value >= 650
- deploy(sen3)
+local function start()
+repeat task.wait() until cash.Value >= 200
+	deploy(totm)
+repeat task.wait() until cash.Value >= 200
+ deploy(totm2)
+repeat task.wait() until cash.Value >= 200
+ deploy(totm3)
+repeat task.wait() until cash.Value >= 200
+ deploy(totm4)
+repeat task.wait() until cash.Value >= 200
+ deploy(totm5)
 repeat task.wait() until cash.Value >= 1500
  deploy(gs)
-repeat upgrade(All) until cash.Value >= 7350
- deploy(flower)
 repeat upgrade(All) until cash.Value >= 9999
  deploy(ohio)
 repeat upgrade(All) until cash.Value >= 9999
  deploy(ohio2)
-repeat upgrade(All) until cash.Value >= 100000
- deploy(astro)
+repeat upgrade(All) until cash.Value >= 7350
+ deploy(flower)
+repeat upgrade(All) until cash.Value >= 37000
+ deploy(clark)
 task.wait(0.5)
-events:WaitForChild("AbilityAuto"):FireServer("OverCharge", true)
-repeat upgrade(All) until cash.Value >= 199999
+events:WaitForChild("AbilityAuto"):FireServer("Bite", true)
+repeat upgrade(All) until cash.Value >= 260000
  deploy(garg)
 repeat upgrade(All) until cash.Value >= 7350
  deploy(flower2)
 repeat upgrade(All) until wave.Value >= 51
 events:WaitForChild("LeaveVote"):FireServer()
+end
+
+start()
+
+wave:GetPropertyChangedSignal("Value"):Connect(function()
+if wave and wave.Value == 0 then
+start()
+)
+
 -- // end of the script
