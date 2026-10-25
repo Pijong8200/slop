@@ -15,7 +15,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Build v1.3 Halloween EL Chaos loaded.",
+        Text = "Build v1.5 Halloween EL Chaos loaded.",
         Duration = 5
     })
 end)
@@ -93,28 +93,28 @@ local functions = ReplicatedStorage:WaitForChild("Functions", 0.1)
 
 --// Input manager
 local function tapKey(keyCode)
-	VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
-	task.wait(0.3)
-	VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
+    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
+    task.wait(0.3)
+    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
 end
 
 --// Match detector / lobby handling
 if not functions then
-	print("Not in match")
-	char:PivotTo(CFrame.new(-9, 61, 102))
-	tapKey(Enum.KeyCode.W)
-	tapKey(Enum.KeyCode.A)
-	tapKey(Enum.KeyCode.S)
-	tapKey(Enum.KeyCode.D)
-	task.wait(1)
-	events:WaitForChild("CreateParty"):FireServer("Elevator8", 1, true)
+    print("Not in match")
+    char:PivotTo(CFrame.new(-9, 61, 102))
+    tapKey(Enum.KeyCode.W)
+    tapKey(Enum.KeyCode.A)
+    tapKey(Enum.KeyCode.S)
+    tapKey(Enum.KeyCode.D)
+    task.wait(1)
+    events:WaitForChild("CreateParty"):FireServer("Elevator8", 1, true)
 task.wait(1)
 events:WaitForChild("StartElevator"):FireServer("Elevator8")
-	print("Attempted to teleport")
-	task.wait(3)
-	return
+    print("Attempted to teleport")
+    task.wait(3)
+    return
 else
-	print("In game")
+    print("In game")
 end
 
 --// Match variables
@@ -214,29 +214,29 @@ end)
 
 --// Tower deployment
 local function deploy(towerData)
-	return spawnRemote:InvokeServer(unpack(towerData))
+    return spawnRemote:InvokeServer(unpack(towerData))
 end
 
 --// Tower upgrading
 
 local function upgrade(towerTable)
-	for _, towerData in ipairs(towerTable) do
-		local towerName = towerData[1]
-		local towerCFrame = towerData[2]
-		local variantName = towerData[4]
+    for _, towerData in ipairs(towerTable) do
+        local towerName = towerData[1]
+        local towerCFrame = towerData[2]
+        local variantName = towerData[4]
 
-		for _, towerInstance in ipairs(towersFolder:GetChildren()) do
-			if towerInstance.Name == towerName then
-				local towerPosition = towerInstance:GetPivot().Position
-				local targetPosition = towerCFrame.Position
+        for _, towerInstance in ipairs(towersFolder:GetChildren()) do
+            if towerInstance.Name == towerName then
+                local towerPosition = towerInstance:GetPivot().Position
+                local targetPosition = towerCFrame.Position
 
-				if (towerPosition - targetPosition).Magnitude < 2 then
-					upgradeRemote:InvokeServer(towerInstance, variantName)
-					break
-				end
-			end
-		end
-	end
+                if (towerPosition - targetPosition).Magnitude < 2 then
+                    upgradeRemote:InvokeServer(towerInstance, variantName)
+                    break
+                end
+            end
+        end
+    end
 end
 
 -- // mutator solver
@@ -278,7 +278,7 @@ local totm = {
 "Trick-or-Treat TV Man",
 CFrame.new(33, -43, 3),
 false,
-"Trick-or-Treat TV Man",
+"Trick-or-Treat TV Man Rainbow",
 {"Rainbow"}
 }
 
@@ -286,7 +286,7 @@ local totm2 = {
 "Trick-or-Treat TV Man",
 CFrame.new(31, -43, 3),
 false,
-"Trick-or-Treat TV Man",
+"Trick-or-Treat TV Man Rainbow",
 {"Rainbow"}
 }
 
@@ -294,7 +294,7 @@ local totm3 = {
 "Trick-or-Treat TV Man",
 CFrame.new(29, -43, 3),
 false,
-"Trick-or-Treat TV Man",
+"Trick-or-Treat TV Man Rainbow",
 {"Rainbow"}
 }
 
@@ -302,7 +302,7 @@ local totm4 = {
 "Trick-or-Treat TV Man",
 CFrame.new(27, -43, 3),
 false,
-"Trick-or-Treat TV Man",
+"Trick-or-Treat TV Man Rainbow",
 {"Rainbow"}
 }
 
@@ -310,7 +310,7 @@ local totm5 = {
 "Trick-or-Treat TV Man",
 CFrame.new(25, -43, 3),
 false,
-"Trick-or-Treat TV Man",
+"Trick-or-Treat TV Man Rainbow",
 {"Rainbow"}
 }
 
@@ -324,15 +324,15 @@ false,
 
 local clark = {
 "Captain Clark",
-CFrame.new(37, -43, 2),
+CFrame.new(61, -43, -16),
 false,
-"Captain Clark",
+"Captain Clark #2",
 {}
 }
 
 local flower = {
 "Flowergirl Afterwind",
-CFrame.new(48, -44, -16),
+CFrame.new(68, -43, -16),
 false,
 "Flowergirl Afterwind Rainbow #2",
 {"Rainbow"}
@@ -383,7 +383,6 @@ ohio2,
 garg,
 flower,
 flower2,
-astro
 }
 
 -- mutator voting
@@ -392,14 +391,11 @@ task.wait(1)
 if buttons and buttons.Visible then
     task.wait(1)
     call()
-    task.wait(1)
-    start()
 elseif buttons then
     buttons:GetPropertyChangedSignal("Visible"):Connect(function()
         if buttons.Visible then
             task.wait(1)
             call()
-            start()
         end
     end)
 end
@@ -408,7 +404,7 @@ end
 local voteGui = gameGui:WaitForChild("Voting")
 task.wait(2)
 if voteGui.Visible then
-	events:WaitForChild("VoteForMap"):FireServer("HalloweenEndless")
+    events:WaitForChild("VoteForMap"):FireServer("HalloweenEndless")
 task.wait(8)
 speedRemote:InvokeServer(6)
 events:WaitForChild("VoteForComplication"):FireServer("Chaos")
@@ -463,7 +459,7 @@ end
 -- // placement sequence
 local function start()
 repeat task.wait() until cash.Value >= 200
-	deploy(totm)
+    deploy(totm)
 repeat task.wait() until cash.Value >= 200
  deploy(totm2)
 repeat task.wait() until cash.Value >= 200
@@ -472,15 +468,16 @@ repeat task.wait() until cash.Value >= 200
  deploy(totm4)
 repeat task.wait() until cash.Value >= 200
  deploy(totm5)
+repeat task.wait() until cash.Value >= 9999
+ deploy(ohio)
 repeat task.wait() until cash.Value >= 1500
  deploy(gs)
-repeat upgrade(All) until cash.Value >= 9999
- deploy(ohio)
-repeat upgrade(All) until cash.Value >= 9999
+ upgrade(All)
+repeat task.wait() until cash.Value >= 9999
  deploy(ohio2)
-repeat upgrade(All) until cash.Value >= 7350
+repeat task.wait() until cash.Value >= 7350
  deploy(flower)
-repeat upgrade(All) until cash.Value >= 37000
+repeat task.wait() until cash.Value >= 37000
  deploy(clark)
 task.wait(0.5)
 events:WaitForChild("AbilityAuto"):FireServer("Bite", true)
@@ -491,7 +488,9 @@ repeat upgrade(All) until cash.Value >= 7350
 repeat upgrade(All) until wave.Value >= 51
 events:WaitForChild("LeaveVote"):FireServer()
 end
+end)
 
+repeat task.wait() until buttons.Visible
 start()
 
 local rebound = false
@@ -500,6 +499,7 @@ wave:GetPropertyChangedSignal("Value"):Connect(function()
     if wave.Value == 0 and not rebound then
         rebound = true
         start()
+task.wait(5)
     elseif wave.Value ~= 0 then
         rebound = false
     end
