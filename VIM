@@ -1,0 +1,22 @@
+local VIM = game:GetService("VirtualInputManager")
+
+local function tapkey(Key, Duration)
+    Duration = Duration or 0.05
+
+    if typeof(Key) == "number" then
+        Key = Enum.KeyCode[tostring(Key)]
+        if not Key then
+            Key = Enum.KeyCode["One"]
+        end
+    elseif typeof(Key) == "string" then
+        Key = Enum.KeyCode[Key:upper()]
+    end
+
+    if not Key then return end
+
+    VIM:SendKeyEvent(true, Key, false, game)
+    task.wait(Duration)
+    VIM:SendKeyEvent(false, Key, false, game)
+end
+
+return tapkey
