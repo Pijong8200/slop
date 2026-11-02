@@ -6,10 +6,23 @@ local function tapkey(Key, Duration)
     Duration = Duration or 0.05
 
     if typeof(Key) == "number" then
-        Key = Enum.KeyCode[tostring(Key)] or Enum.KeyCode["One"]
-    elseif typeof(Key) == "string" then
-        Key = Enum.KeyCode[Key:upper()]
-    end
+    local Numbers = {
+        [0] = "Zero",
+        [1] = "One",
+        [2] = "Two",
+        [3] = "Three",
+        [4] = "Four",
+        [5] = "Five",
+        [6] = "Six",
+        [7] = "Seven",
+        [8] = "Eight",
+        [9] = "Nine"
+    }
+
+    Key = Enum.KeyCode[Numbers[Key]]
+elseif typeof(Key) == "string" then
+    Key = Enum.KeyCode[Key:upper()]
+end
 
     if not Key then return end
 
