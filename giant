@@ -1,4 +1,26 @@
 
+repeat task.wait() until game:IsLoaded()
+
+local vim = game:GetService("VirtualInputManager")
+while not vim do
+    task.wait(0.5)
+    vim = game:GetService("VirtualInputManager")
+end
+
+local starterGui = game:GetService("StarterGui")
+while not starterGui do
+    task.wait(0.5)
+    starterGui = game:GetService("StarterGui")
+end
+
+pcall(function()
+    starterGui:SetCore("SendNotification", {
+        Title = "Success!",
+        Text = "Ads fuckery",
+        Duration = 5
+    })
+end)
+
 local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
 
 if queue then
@@ -7,7 +29,7 @@ if queue then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/giant"))()
     ]])
 
-    print("Game loaded, running v1.2 of ADS.")
+    print(1)
 end
 
 local functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/functions"))()
