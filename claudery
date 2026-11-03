@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 12",
+        Text = "Ads fuckery 13",
         Duration = 5
     })
 end)
@@ -1343,10 +1343,10 @@ local SETUP_CASTS = {
 -- { kind, number }   kind = "Skill" (1-5) | "Fruit" (1-2) | "Assist" (1-2)
 -- Skill 5 is awakened-only; add { "Skill", 5 } if you want it
 local CAST_PRIORITY = {
-    { "Skill", 1 },     -- always first
-    { "Skill", 4 },
-    { "Skill", 2 },
+    { "Skill", 2 },     -- always first
     { "Skill", 3 },
+    { "Skill", 4 },
+    { "Skill", 1 },
     { "Fruit", 1 },
     { "Fruit", 2 },
     { "Assist", 1 },
