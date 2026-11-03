@@ -41,6 +41,23 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = Players.LocalPlayer
 
+local noclip = true
+
+local connection
+
+connection = RunService.Stepped:Connect(function()
+    if not noclip then return end
+
+    local character = player.Character
+    if not character then return end
+
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+end)
+
 -- Filled in at the bottom once workspace.Folders.Monsters exists.
 -- It is NOT waited on here, so the room / auto-sell code can run in the lobby.
 local monstersFolder = nil
