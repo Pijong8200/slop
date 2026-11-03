@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 11",
+        Text = "Ads fuckery 12",
         Duration = 5
     })
 end)
@@ -28,7 +28,7 @@ end
 --==================================================
 -- SERVICES
 --==================================================
-task.wait(2)
+
 
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -41,6 +41,10 @@ local HttpService = game:GetService("HttpService")
 --==================================================
 
 local Player = Players.LocalPlayer
+while not Player do
+task.wait(0.5)
+Player = Players.LocalPlayer
+end
 
 local noclip = true
 
