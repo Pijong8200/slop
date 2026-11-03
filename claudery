@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 7",
+        Text = "Ads fuckery 8",
         Duration = 5
     })
 end)
@@ -1397,6 +1397,7 @@ local retrybtn = Player:WaitForChild("PlayerGui", 10).UniversalGui.UniversalCent
 
 retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
     if retrybtn.Visible == true then
+      task.wait(2)
         local Event = game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent
         Event:FireServer("RetryDungeon")
     end
