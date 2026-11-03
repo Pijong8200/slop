@@ -54,7 +54,7 @@ local env = (type(getgenv) == "function" and getgenv()) or _G
 --==================================================
 
 local SETTINGS = {
-    Speed = 500,            -- studs per second (math.huge = instant snap to the next mob)
+    Speed = 600,            -- studs per second (math.huge = instant snap to the next mob)
     AttackRange = 35,       -- M1 + casts start when the mob is this close
     StopDistance = 7,       -- how far in front of the mob you stand
 
