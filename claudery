@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 1",
+        Text = "Ads fuckery 2",
         Duration = 5
     })
 end)
@@ -48,7 +48,7 @@ local connection
 connection = RunService.Stepped:Connect(function()
     if not noclip then return end
 
-    local character = player.Character
+    local character = Player.Character
     if not character then return end
 
     for _, part in ipairs(character:GetDescendants()) do
@@ -75,8 +75,8 @@ local SETTINGS = {
     AttackRange = 35,       -- M1 + casts start when the mob is this close
     StopDistance = 7,       -- how far in front of the mob you stand
 
-    ClickDelay = 0.1,       -- seconds between basic attack (M1) remotes
-    CastGap = 0,            -- min seconds between two casts (0 = up to one cast per frame)
+    ClickDelay = 0.5,       -- seconds between basic attack (M1) remotes
+    CastGap = 0.25,            -- min seconds between two casts (0 = up to one cast per frame)
     RecastGuard = 0.25,     -- after casting a skill, ignore that skill this long so the server's cooldown can come back
     ReadyWithin = 0.1,      -- cast when this much cooldown (or less) is left; offsets network lag (the game's own client allows 0.5)
 
@@ -166,7 +166,7 @@ local function dumpMob(mob)
 
 end
 
-local retrybtn = game:GetService("Players").LocalPlayer.PlayerGui.UniversalGui.UniversalCenterUIFrame.ResultUI.Frame.ResultLayout
+local retrybtn = game:GetService("Players").LocalPlayer.PlayerGui.UniversalGui.UniversalCenterUIFrame.ResultUI
 
 retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
     if retrybtn.Visible == true then
