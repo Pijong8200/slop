@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 8",
+        Text = "Ads fuckery 9",
         Duration = 5
     })
 end)
@@ -1403,6 +1403,9 @@ retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
     end
 end)
 
+
+local HttpService = game:GetService("HttpService")
+
 local PlayerGui = Player:WaitForChild("PlayerGui", 5)
 
 local UniversalGui = PlayerGui:WaitForChild("UniversalGui", 5)
@@ -1428,26 +1431,52 @@ local rewards = {}
 local debounceId = 0
 local sending = false
 
+-- Hourly accessory counter
+local accessoryCount = 0
+local currentHour = os.date("%Y-%m-%d %H")
+
+local function updateHour()
+    local newHour = os.date("%Y-%m-%d %H")
+
+    if newHour ~= currentHour then
+        currentHour = newHour
+        accessoryCount = 0
+
+        print("New hour! Accessory counter reset.")
+    end
+end
+
 -- Extract reward name and amount
 local function getReward(child)
     local name = child.Name:gsub("%s*ImageLabel$", "")
     local amount
+    local isAccessory = name:match("^%d+$") ~= nil
+
+    -- Numeric reward names represent accessories
+    if isAccessory then
+        name = "Accessory"
+    end
 
     for _, descendant in ipairs(child:GetDescendants()) do
         if descendant:IsA("TextLabel") then
             local text = descendant.Text:match("^%s*(.-)%s*$")
+            local number = text:match("^[x×]?(%d+)$")
 
-            if text:match("^[x×]?%d+$") then
-                amount = text:gsub("^[x×]", "")
+            if number then
+                amount = tonumber(number)
                 break
             end
         end
     end
 
+    -- Count actual accessory quantity
+    if isAccessory then
+        accessoryCount += amount or 1
+    end
+
     return amount and (name .. " x" .. amount) or name
 end
 
--- Remove duplicated Time: prefix
 local function getCompletionTime()
     return TimeText.Text:gsub("^%s*Time:%s*", "")
 end
@@ -1455,15 +1484,17 @@ end
 -- Send webhook
 local function sendRewards()
     if #rewards == 0 or sending then return end
+
     sending = true
+
+    updateHour()
 
     local snapshot = table.clone(rewards)
 
     local rewardText = table.concat(snapshot, "\n")
-
     local completionTime = getCompletionTime()
     local pity = PityCount.Text
-    local currentTime = os.date("%Y-%m-%d %H:%M:%S")
+    local currentTimeText = os.date("%I:%M:%S %p")
 
     local payload = {
         embeds = {{
@@ -1483,8 +1514,13 @@ local function sendRewards()
                     inline = true
                 },
                 {
+                    name = "🎁 Accessories This Hour",
+                    value = tostring(accessoryCount),
+                    inline = true
+                },
+                {
                     name = "🕒 Received At",
-                    value = currentTime,
+                    value = currentTimeText,
                     inline = false
                 }
             },
@@ -1492,7 +1528,7 @@ local function sendRewards()
             timestamp = DateTime.now():ToIsoDate(),
 
             footer = {
-                text = "Reward Logger"
+                text = "Reward Logger • Hourly Tracker"
             }
         }}
     }
@@ -1500,7 +1536,6 @@ local function sendRewards()
     local body = HttpService:JSONEncode(payload)
     local success = false
 
-    -- Retry failed requests
     for attempt = 1, 3 do
         local ok, response = pcall(function()
             return Request({
@@ -1533,7 +1568,6 @@ local function sendRewards()
     end
 
     if success then
-        -- Remove only the rewards that were successfully sent
         for _ = 1, #snapshot do
             table.remove(rewards, 1)
         end
@@ -1545,14 +1579,15 @@ local function sendRewards()
 
     sending = false
 
-    -- Send any rewards that arrived while the request was running
     if #rewards > 0 then
         task.delay(2, sendRewards)
     end
 end
 
--- Reset debounce whenever a reward arrives
+-- Reward listener
 RewardGrid.ChildAdded:Connect(function(child)
+    updateHour()
+
     table.insert(rewards, getReward(child))
 
     debounceId += 1
