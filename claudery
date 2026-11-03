@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 2",
+        Text = "Ads fuckery 3",
         Duration = 5
     })
 end)
@@ -165,15 +165,6 @@ local function dumpMob(mob)
     end
 
 end
-
-local retrybtn = game:GetService("Players").LocalPlayer.PlayerGui.UniversalGui.UniversalCenterUIFrame.ResultUI
-
-retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
-    if retrybtn.Visible == true then
-        local Event = game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent
-        Event:FireServer("RetryDungeon")
-    end
-end)
 
 --==================================================
 -- MOB HELPERS
@@ -1361,6 +1352,15 @@ local CAST_PRIORITY = {
 --==================================================
 -- BOOTSTRAP
 --==================================================
+
+local retrybtn = game:GetService("Players").LocalPlayer.PlayerGui.UniversalGui.UniversalCenterUIFrame.ResultUI
+
+retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
+    if retrybtn.Visible == true then
+        local Event = game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent
+        Event:FireServer("RetryDungeon")
+    end
+end)
 
 -- Shut down an older copy of this script if it is still running
 local previous = env.__FarmEngine
