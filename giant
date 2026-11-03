@@ -31,7 +31,7 @@ tweentp(CFrame.new(293, 61, 39, 0, 0, -1, 0, 1, 0, 1, 0, 0)) -- boss
 tapkey(1)
 task.wait(1.8)
 tweentp(CFrame.new(490, 84, 42, 0, 0, -1, 0, 1, 0, 1, 0, 0)) -- first group
-task.wait(1)
+task.wait(0.5)
 tapkey(3)
 task.wait(1)
 tweentp(CFrame.new(610, 93, 41, 0, 0, -1, 0, 1, 0, 1, 0, 0)) -- 2nd after boss before last group
@@ -42,7 +42,7 @@ tapkey("r")
 task.wait(0.5)
 tweentp(CFrame.new(740, 92, 43, 0, 0, -1, 0, 1, 0, 1, 0, 0)) -- last group
 task.wait(1)
-tapkey(1)
+tapkey("z")
 task.wait(0.5)
 tapkey("e")
 task.wait(0.5)
