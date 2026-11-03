@@ -12,10 +12,13 @@ task.wait(1)
 VIM = game:GetService("VirtualInputManager")
 end
 
+if VIM and starterGui then
+task.wait(3)
+end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 14",
+        Text = "Ads fuckery part 15",
         Duration = 5
     })
 end)
