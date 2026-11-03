@@ -1,11 +1,10 @@
 local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
+
 if queue then
     queue([[
         repeat task.wait() until game:IsLoaded()
-        local cacheBuster = "?t=" .. tostring(math.random(1, 100000))
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/adsaf" .. cacheBuster))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/giant"))()
     ]])
-    print("Loop begun, v1 will load on ADS shortly.")
-    end
 
-loadstring(game:HttpGet("https://rawscripts.net/raw/EXTREME-Anime-Dimensions-Simulator-for-mobile-18968"))()
+    print("Game loaded, running v1 of ADS.")
+end
