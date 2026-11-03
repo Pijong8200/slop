@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 6",
+        Text = "Ads fuckery 7",
         Duration = 5
     })
 end)
@@ -33,6 +33,7 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
 
 
 --==================================================
@@ -1401,8 +1402,6 @@ retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
     end
 end)
 
-local HttpService = game:GetService("HttpService")
-
 local PlayerGui = Player:WaitForChild("PlayerGui", 5)
 
 local UniversalGui = PlayerGui:WaitForChild("UniversalGui", 5)
@@ -1419,12 +1418,16 @@ local PityCount = ResultLayout
     :WaitForChild("AccessoryPityBar", 5)
     :WaitForChild("PityCount", 5)
 
+local TimeText = ResultLayout:WaitForChild("TimeText", 5)
+
 local Webhook = "https://discord.com/api/webhooks/1563018801447178361/_SnlgYdYUOvAKsld0FPLD2Txr4RAnBlfDGmNk1RecgWUubWy8VC9LMgkTw5r5oXBWNBW"
 local Request = request or http_request or (syn and syn.request)
 
 local rewards = {}
-local debounce = false
+local debounceId = 0
+local sending = false
 
+-- Extract reward name and amount
 local function getReward(child)
     local name = child.Name:gsub("%s*ImageLabel$", "")
     local amount
@@ -1443,53 +1446,120 @@ local function getReward(child)
     return amount and (name .. " x" .. amount) or name
 end
 
-local function sendRewards()
-    if #rewards == 0 then return end
-
-    local rewardText = table.concat(rewards, "\n")
-
-    local pity = PityCount.Text
-
-    local TimeText = ResultLayout:WaitForChild("TimeText", 5)
-
-    local message = table.concat({
-    "**Reward Results**",
-    "```",
-    rewardText,
-    "```",
-    "**Time:** " .. TimeText.Text,
-    "**Accessory Pity:** " .. PityCount.Text,
-    "━━━━━━━━━━━━━━━━━━━━"
-}, "\n")
-    local success, err = pcall(function()
-        Request({
-            Url = Webhook,
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
-            Body = HttpService:JSONEncode({
-                content = message
-            })
-        })
-    end)
-
-    if not success then
-        warn("Webhook failed:", err)
-    end
-
-    table.clear(rewards)
+-- Remove duplicated Time: prefix
+local function getCompletionTime()
+    return TimeText.Text:gsub("^%s*Time:%s*", "")
 end
 
+-- Send webhook
+local function sendRewards()
+    if #rewards == 0 or sending then return end
+    sending = true
+
+    local snapshot = table.clone(rewards)
+
+    local rewardText = table.concat(snapshot, "\n")
+
+    local completionTime = getCompletionTime()
+    local pity = PityCount.Text
+    local currentTime = os.date("%Y-%m-%d %H:%M:%S")
+
+    local payload = {
+        embeds = {{
+            title = "🏆 Reward Results",
+            description = "```text\n" .. rewardText .. "\n```",
+            color = 5793266,
+
+            fields = {
+                {
+                    name = "⏱️ Completion Time",
+                    value = completionTime,
+                    inline = true
+                },
+                {
+                    name = "💎 Accessory Pity",
+                    value = pity,
+                    inline = true
+                },
+                {
+                    name = "🕒 Received At",
+                    value = currentTime,
+                    inline = false
+                }
+            },
+
+            timestamp = DateTime.now():ToIsoDate(),
+
+            footer = {
+                text = "Reward Logger"
+            }
+        }}
+    }
+
+    local body = HttpService:JSONEncode(payload)
+    local success = false
+
+    -- Retry failed requests
+    for attempt = 1, 3 do
+        local ok, response = pcall(function()
+            return Request({
+                Url = Webhook,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = body
+            })
+        end)
+
+        if ok and response then
+            local status = response.StatusCode
+
+            if (status and status >= 200 and status < 300)
+                or response.Success == true then
+                success = true
+                break
+            end
+
+            warn("Webhook HTTP error:", status, response.StatusMessage)
+        else
+            warn("Webhook request failed:", response)
+        end
+
+        if attempt < 3 then
+            task.wait(attempt * 2)
+        end
+    end
+
+    if success then
+        -- Remove only the rewards that were successfully sent
+        for _ = 1, #snapshot do
+            table.remove(rewards, 1)
+        end
+
+        print("Reward webhook sent successfully!")
+    else
+        warn("Webhook failed after 3 attempts. Rewards retained.")
+    end
+
+    sending = false
+
+    -- Send any rewards that arrived while the request was running
+    if #rewards > 0 then
+        task.delay(2, sendRewards)
+    end
+end
+
+-- Reset debounce whenever a reward arrives
 RewardGrid.ChildAdded:Connect(function(child)
     table.insert(rewards, getReward(child))
 
-    if not debounce then
-        debounce = true
+    debounceId += 1
+    local currentId = debounceId
 
-        task.delay(2, function()
+    task.delay(2, function()
+        if currentId == debounceId then
             sendRewards()
-            debounce = false
-        end)
-    end
+        end
+    end)
 end)
