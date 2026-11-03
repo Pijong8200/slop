@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery",
+        Text = "Ads fuckery 1",
         Duration = 5
     })
 end)
@@ -149,6 +149,14 @@ local function dumpMob(mob)
 
 end
 
+local retrybtn = game:GetService("Players").LocalPlayer.PlayerGui.UniversalGui.UniversalCenterUIFrame.ResultUI.Frame.ResultLayout
+
+retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
+    if retrybtn.Visible == true then
+        local Event = game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent
+        Event:FireServer("RetryDungeon")
+    end
+end)
 
 --==================================================
 -- MOB HELPERS
