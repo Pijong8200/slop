@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 4",
+        Text = "Ads fuckery 5",
         Duration = 5
     })
 end)
@@ -1403,38 +1403,65 @@ end)
 
 local HttpService = game:GetService("HttpService")
 
-local rewardGrid = Players.LocalPlayer.PlayerGui
-    .UniversalGui.UniversalCenterUIFrame.ResultUI.Frame
-    .ResultLayout.RewardFrame.RewardGridFrame
+local PlayerGui = Player:WaitForChild("PlayerGui", 5)
 
-local webhook = "https://discord.com/api/webhooks/1563018801447178361/_SnlgYdYUOvAKsld0FPLD2Txr4RAnBlfDGmNk1RecgWUubWy8VC9LMgkTw5r5oXBWNBW"
+local UniversalGui = PlayerGui:WaitForChild("UniversalGui", 5)
+local CenterUI = UniversalGui:WaitForChild("UniversalCenterUIFrame", 5)
+local ResultUI = CenterUI:WaitForChild("ResultUI", 5)
+local ResultFrame = ResultUI:WaitForChild("Frame", 5)
+local ResultLayout = ResultFrame:WaitForChild("ResultLayout", 5)
 
-local request = request or http_request or (syn and syn.request)
+local RewardGrid = ResultLayout
+    :WaitForChild("RewardFrame", 5)
+    :WaitForChild("RewardGridFrame", 5)
 
-local function sendReward(child)
-    local rewardName = child.Name:gsub("%s*ImageLabel$", "")
-    local amount = nil
+local PityCount = ResultLayout
+    :WaitForChild("AccessoryPityBar", 5)
+    :WaitForChild("PityCount", 5)
 
-    -- Search nested TextLabels
+local Webhook = "https://discord.com/api/webhooks/1563018801447178361/_SnlgYdYUOvAKsld0FPLD2Txr4RAnBlfDGmNk1RecgWUubWy8VC9LMgkTw5r5oXBWNBW"
+local Request = request or http_request or (syn and syn.request)
+
+local rewards = {}
+local debounce = false
+
+local function getReward(child)
+    local name = child.Name:gsub("%s*ImageLabel$", "")
+    local amount
+
     for _, descendant in ipairs(child:GetDescendants()) do
         if descendant:IsA("TextLabel") then
             local text = descendant.Text:match("^%s*(.-)%s*$")
 
-            -- Only accept numeric amounts, optionally prefixed by x
             if text:match("^[x×]?%d+$") then
-                amount = text
+                amount = text:gsub("^[x×]", "")
                 break
             end
         end
     end
 
-    local message = amount
-        and ("**" .. rewardName .. "** x" .. amount)
-        or ("**" .. rewardName .. "**")
+    return amount and (name .. " x" .. amount) or name
+end
+
+local function sendRewards()
+    if #rewards == 0 then return end
+
+    local rewardText = table.concat(rewards, "\n")
+
+    local pity = PityCount.Text
+
+    local message = table.concat({
+        "**Reward Results**",
+        "```",
+        rewardText,
+        "```",
+        "**Accessory Pity:** " .. pity,
+        "━━━━━━━━━━━━━━━━━━━━"
+    }, "\n")
 
     local success, err = pcall(function()
-        request({
-            Url = webhook,
+        Request({
+            Url = Webhook,
             Method = "POST",
             Headers = {
                 ["Content-Type"] = "application/json"
@@ -1448,8 +1475,19 @@ local function sendReward(child)
     if not success then
         warn("Webhook failed:", err)
     end
+
+    table.clear(rewards)
 end
 
-rewardGrid.ChildAdded:Connect(function(child)
-    sendReward(child)
+RewardGrid.ChildAdded:Connect(function(child)
+    table.insert(rewards, getReward(child))
+
+    if not debounce then
+        debounce = true
+
+        task.delay(2, function()
+            sendRewards()
+            debounce = false
+        end)
+    end
 end)
