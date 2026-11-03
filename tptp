@@ -1,0 +1,698 @@
+--==================================================
+-- SERVICES
+--==================================================
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local VIM = game:GetService("VirtualInputManager")
+
+
+--==================================================
+-- REFERENCES
+--==================================================
+
+local Player = Players.LocalPlayer
+
+local monstersFolder = workspace:WaitForChild("Folders")
+    :WaitForChild("Monsters")
+
+-- Lets a re-run of this script shut down the previous copy
+local env = (type(getgenv) == "function" and getgenv()) or _G
+
+
+--==================================================
+-- SETTINGS
+--==================================================
+
+local SETTINGS = {
+    Speed = 500,            -- studs per second (math.huge = instant snap to the next mob)
+    AttackRange = 35,       -- start attacking when the mob is this close
+    StopDistance = 7,       -- how far in front of the mob you stand
+
+    SkillDelay = 0.3,       -- default wait after each skill key
+    ClickDelay = 0.05,      -- wait between M1 clicks
+    KeyHoldTime = 0.02,     -- how long each key stays pressed
+    ClickAtCenter = true,   -- click the middle of the screen (false = top-left corner like before)
+
+    ToggleKey = Enum.KeyCode.RightControl, -- pause / resume the farm
+
+    Debug = false,          -- print why each target was dropped
+    DebugDump = false,      -- print every attribute / value object of each new target
+}
+
+-- Anything in this table counts as "this mob is dead"
+local DEATH = {
+    MinHealth = 1, -- health below this = dead (0.4 hp is dead, not alive)
+
+    -- true attribute / BoolValue child with one of these names = dead
+    FlagNames = { "Dead", "IsDead", "Dying", "Died" },
+
+    -- number attribute / NumberValue / IntValue child with one of these names below MinHealth = dead
+    HealthNames = { "Health", "HP", "CurrentHealth", "CurrentHP" },
+}
+
+
+--==================================================
+-- DEBUG
+--==================================================
+
+local function debugPrint(...)
+
+    if SETTINGS.Debug then
+        print("[Farm Engine]", ...)
+    end
+
+end
+
+local function dumpMob(mob)
+
+    print("[Farm Engine] ---- target dump:", mob.Name)
+
+    local hum = mob:FindFirstChildOfClass("Humanoid")
+
+    if hum then
+        print("  Humanoid:", hum.Health, "/", hum.MaxHealth, "state:", hum:GetState().Name)
+    else
+        print("  Humanoid: none")
+    end
+
+    for name, value in pairs(mob:GetAttributes()) do
+        print("  attribute", name, "=", value)
+    end
+
+    for _, obj in ipairs(mob:GetDescendants()) do
+        if obj:IsA("ValueBase") then
+            print("  value", obj:GetFullName(), "=", obj.Value)
+        end
+    end
+
+end
+
+
+--==================================================
+-- MOB HELPERS
+--==================================================
+
+local function getRoot(mob)
+
+    local root = mob:FindFirstChild("HumanoidRootPart")
+
+    if root and root:IsA("BasePart") then
+        return root
+    end
+
+    if mob:IsA("Model") and mob.PrimaryPart then
+        return mob.PrimaryPart
+    end
+
+    return mob:FindFirstChildWhichIsA("BasePart")
+
+end
+
+-- Returns a reason string if the mob is dead / gone, nil if it is alive
+local function deathReason(mob)
+
+    if not mob or mob.Parent ~= monstersFolder then
+        return "removed from Monsters folder"
+    end
+
+    local hum = mob:FindFirstChildOfClass("Humanoid")
+
+    if hum then
+
+        if hum.Health < DEATH.MinHealth then
+            return "humanoid health below " .. DEATH.MinHealth
+        end
+
+        if hum:GetState() == Enum.HumanoidStateType.Dead then
+            return "humanoid state is Dead"
+        end
+
+    end
+
+    for _, name in ipairs(DEATH.FlagNames) do
+
+        if mob:GetAttribute(name) == true then
+            return "attribute " .. name
+        end
+
+        local obj = mob:FindFirstChild(name)
+
+        if obj and obj:IsA("BoolValue") and obj.Value then
+            return "BoolValue " .. name
+        end
+
+    end
+
+    for _, name in ipairs(DEATH.HealthNames) do
+
+        local attr = mob:GetAttribute(name)
+
+        if type(attr) == "number" and attr < DEATH.MinHealth then
+            return "attribute " .. name .. " below " .. DEATH.MinHealth
+        end
+
+        local obj = mob:FindFirstChild(name)
+
+        if obj
+            and (obj:IsA("NumberValue") or obj:IsA("IntValue"))
+            and obj.Value < DEATH.MinHealth then
+
+            return "value " .. name .. " below " .. DEATH.MinHealth
+
+        end
+
+    end
+
+    if not getRoot(mob) then
+        return "no root part"
+    end
+
+    return nil
+
+end
+
+
+--==================================================
+-- PLAYER HELPERS
+--==================================================
+
+-- Always fetched fresh, so respawning never leaves stale references
+local function getMyRoot()
+
+    local character = Player.Character
+
+    if not character then
+        return nil
+    end
+
+    local root = character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+    if root and humanoid and humanoid.Health > 0 then
+        return root
+    end
+
+    return nil
+
+end
+
+
+--==================================================
+-- STATE
+--==================================================
+
+local state = {
+    running = false,  -- engine alive (false after stop)
+    enabled = false,  -- toggled by the toggle key
+    target = nil,
+    inRange = false,
+}
+
+local engineConnections = {}
+local targetConnections = {}
+
+
+--==================================================
+-- INPUT
+--==================================================
+
+local function pressKey(keyCode)
+
+    VIM:SendKeyEvent(true, keyCode, false, game)
+    task.wait(SETTINGS.KeyHoldTime)
+    VIM:SendKeyEvent(false, keyCode, false, game)
+
+end
+
+local function clickM1()
+
+    local x = 0
+    local y = 0
+
+    if SETTINGS.ClickAtCenter then
+
+        local camera = workspace.CurrentCamera
+
+        if camera then
+            x = camera.ViewportSize.X / 2
+            y = camera.ViewportSize.Y / 2
+        end
+
+    end
+
+    VIM:SendMouseButtonEvent(x, y, 0, true, game, 0)
+    task.wait(0.01)
+    VIM:SendMouseButtonEvent(x, y, 0, false, game, 0)
+
+end
+
+
+--==================================================
+-- TARGET CLEANUP
+--==================================================
+
+local function disconnectTarget()
+
+    for _, connection in ipairs(targetConnections) do
+        connection:Disconnect()
+    end
+
+    table.clear(targetConnections)
+
+end
+
+local function clearTarget()
+
+    disconnectTarget()
+
+    state.target = nil
+    state.inRange = false
+
+end
+
+
+--==================================================
+-- FIND NEAREST ALIVE MOB
+--==================================================
+
+local function getNearestMob(fromPosition, ignore)
+
+    local closestMob = nil
+    local shortestDistance = math.huge
+
+    for _, mob in ipairs(monstersFolder:GetChildren()) do
+
+        if mob ~= ignore and not deathReason(mob) then
+
+            local root = getRoot(mob)
+
+            if root then
+
+                local distance = (fromPosition - root.Position).Magnitude
+
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    closestMob = mob
+                end
+
+            end
+
+        end
+
+    end
+
+    return closestMob
+
+end
+
+
+--==================================================
+-- TARGET WATCHING + ACQUISITION
+--==================================================
+
+local acquireTarget -- defined below, watchTarget needs it
+
+-- Every signal that can mean "this mob died" re-checks it instantly
+-- and swaps the target inside the same callback (no defer, no waiting for a frame)
+local function watchTarget(mob)
+
+    local function onChange()
+
+        if state.target ~= mob then
+            return
+        end
+
+        local reason = deathReason(mob)
+
+        if reason then
+            debugPrint("target dead (" .. reason .. "):", mob.Name)
+            acquireTarget(mob)
+        end
+
+    end
+
+    local function watch(signal)
+        table.insert(targetConnections, signal:Connect(onChange))
+    end
+
+    local humanoid = mob:FindFirstChildOfClass("Humanoid")
+
+    if humanoid then
+        watch(humanoid.HealthChanged)
+        watch(humanoid.Died)
+        watch(humanoid.StateChanged)
+    end
+
+    watch(mob.AncestryChanged)
+    watch(mob.AttributeChanged)
+    watch(mob.ChildRemoved)
+
+    for _, list in ipairs({ DEATH.FlagNames, DEATH.HealthNames }) do
+
+        for _, name in ipairs(list) do
+
+            local obj = mob:FindFirstChild(name)
+
+            if obj and obj:IsA("ValueBase") then
+                watch(obj.Changed)
+            end
+
+        end
+
+    end
+
+end
+
+acquireTarget = function(ignore)
+
+    clearTarget()
+
+    if not state.running or not state.enabled then
+        return
+    end
+
+    local myRoot = getMyRoot()
+
+    if not myRoot then
+        return
+    end
+
+    local mob = getNearestMob(myRoot.Position, ignore)
+
+    if not mob then
+        return
+    end
+
+    local root = getRoot(mob)
+
+    state.target = mob
+    state.inRange = (root.Position - myRoot.Position).Magnitude <= SETTINGS.AttackRange
+
+    watchTarget(mob)
+
+    debugPrint("new target:", mob.Name)
+
+    if SETTINGS.DebugDump then
+        dumpMob(mob)
+    end
+
+end
+
+-- Returns true if there is a living target (swaps instantly if the old one is dead)
+local function refreshTarget()
+
+    local mob = state.target
+
+    if mob then
+
+        local reason = deathReason(mob)
+
+        if not reason then
+            return true
+        end
+
+        debugPrint("target dead (" .. reason .. "):", mob.Name)
+
+    end
+
+    acquireTarget(mob)
+
+    return state.target ~= nil
+
+end
+
+-- Called right before every click / key press
+local function canAttack()
+
+    if not state.enabled then
+        return false
+    end
+
+    if not refreshTarget() then
+        return false
+    end
+
+    return state.inRange
+
+end
+
+
+--==================================================
+-- MOVEMENT
+--==================================================
+
+local function step(deltaTime)
+
+    if not state.enabled then
+        return
+    end
+
+    local myRoot = getMyRoot()
+
+    if not myRoot then
+        clearTarget()
+        return
+    end
+
+    if not refreshTarget() then
+        return
+    end
+
+    local root = getRoot(state.target)
+
+    local myPosition = myRoot.Position
+    local targetPosition = root.Position
+
+    -- Stand in front of the enemy
+    local standPosition = targetPosition + root.CFrame.LookVector * SETTINGS.StopDistance
+    local offset = standPosition - myPosition
+    local distance = offset.Magnitude
+
+    state.inRange = (targetPosition - myPosition).Magnitude <= SETTINGS.AttackRange
+
+    local newPosition = standPosition
+
+    if distance > 0.05 then
+
+        local maxStep = SETTINGS.Speed * deltaTime
+
+        if maxStep < distance then
+            newPosition = myPosition + offset.Unit * maxStep
+        end
+
+    end
+
+    local lookAt = Vector3.new(targetPosition.X, newPosition.Y, targetPosition.Z)
+
+    if (lookAt - newPosition).Magnitude > 0.01 then
+        myRoot.CFrame = CFrame.lookAt(newPosition, lookAt)
+    else
+        myRoot.CFrame = CFrame.new(newPosition) * myRoot.CFrame.Rotation
+    end
+
+    myRoot.AssemblyLinearVelocity = Vector3.zero
+    myRoot.AssemblyAngularVelocity = Vector3.zero
+
+end
+
+
+--==================================================
+-- M1 THREAD
+--==================================================
+
+local function startClickLoop()
+
+    task.spawn(function()
+
+        while state.running do
+
+            if canAttack() then
+                clickM1()
+            end
+
+            task.wait(SETTINGS.ClickDelay)
+
+        end
+
+    end)
+
+end
+
+
+--==================================================
+-- SKILL ROTATION THREAD
+--==================================================
+
+-- Each entry is either a KeyCode, or { KeyCode, delayAfterThisKey }
+local function startSkillLoop(skills)
+
+    task.spawn(function()
+
+        local index = 1
+
+        while state.running do
+
+            if #skills > 0 and canAttack() then
+
+                local entry = skills[index]
+                local key = entry
+                local delay = SETTINGS.SkillDelay
+
+                if type(entry) == "table" then
+                    key = entry[1]
+                    delay = entry[2] or SETTINGS.SkillDelay
+                end
+
+                pressKey(key)
+
+                index = index % #skills + 1
+
+                task.wait(delay)
+
+            else
+
+                RunService.Heartbeat:Wait()
+
+            end
+
+        end
+
+    end)
+
+end
+
+
+--==================================================
+-- STOP / START
+--==================================================
+
+local function stopFarm()
+
+    state.running = false
+    state.enabled = false
+
+    clearTarget()
+
+    for _, connection in ipairs(engineConnections) do
+        connection:Disconnect()
+    end
+
+    table.clear(engineConnections)
+
+end
+
+local function startFarm(sequence)
+
+    sequence = sequence or {}
+
+    local skills = sequence.skills or {}
+
+    -- Shut down an older copy of this script if it is still running
+    local previous = env.__FarmEngine
+
+    if previous and previous.stop then
+        pcall(previous.stop)
+    end
+
+    env.__FarmEngine = { stop = stopFarm }
+
+    state.running = true
+    state.enabled = true
+
+    -- Initial setup keys
+    for _, key in ipairs(sequence.setup or {}) do
+        pressKey(key)
+        task.wait(0.1)
+    end
+
+    if not state.running then
+        return
+    end
+
+    -- Movement + safety checks
+    table.insert(engineConnections, RunService.Heartbeat:Connect(step))
+
+    table.insert(engineConnections, RunService.PreRender:Connect(function()
+
+        if state.enabled then
+            refreshTarget()
+        end
+
+    end))
+
+    -- Grab a target the moment a mob spawns while idle
+    table.insert(engineConnections, monstersFolder.ChildAdded:Connect(function()
+
+        if state.enabled and not state.target then
+            refreshTarget()
+        end
+
+    end))
+
+    -- Pause / resume key
+    table.insert(engineConnections, UserInputService.InputBegan:Connect(function(input, processed)
+
+        if processed then
+            return
+        end
+
+        if input.KeyCode == SETTINGS.ToggleKey then
+
+            state.enabled = not state.enabled
+
+            if not state.enabled then
+                clearTarget()
+            end
+
+            print("[Farm Engine]", state.enabled and "Resumed" or "Paused")
+
+        end
+
+    end))
+
+    startClickLoop()
+    startSkillLoop(skills)
+
+    refreshTarget()
+
+    local names = {}
+
+    for _, entry in ipairs(skills) do
+        local key = type(entry) == "table" and entry[1] or entry
+        table.insert(names, key.Name)
+    end
+
+    print("[Farm Engine] Running")
+    print("[Farm Engine] Death detection: health < " .. DEATH.MinHealth .. ", Died, state, flags, removal")
+    print("[Farm Engine] Skill rotation:", table.concat(names, " > "))
+    print("[Farm Engine] Speed:", SETTINGS.Speed)
+    print("[Farm Engine] Pause / resume key:", SETTINGS.ToggleKey.Name)
+
+end
+
+
+--==================================================
+-- SEQUENCES (edit these, nothing above needs to change)
+--==================================================
+
+-- Pressed once at the start
+local SETUP_KEYS = {
+    Enum.KeyCode.X,
+    Enum.KeyCode.Z,
+}
+
+-- Looped while a mob is in range
+-- Entries can be a KeyCode, or { KeyCode, delayAfterThisKey }
+local SKILL_SEQUENCE = {
+    Enum.KeyCode.Four,
+    Enum.KeyCode.Two,
+    Enum.KeyCode.One,
+    Enum.KeyCode.Three,
+}
+
+startFarm({
+    setup = SETUP_KEYS,
+    skills = SKILL_SEQUENCE,
+})
