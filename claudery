@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 5",
+        Text = "Ads fuckery 6",
         Duration = 5
     })
 end)
@@ -1450,15 +1450,17 @@ local function sendRewards()
 
     local pity = PityCount.Text
 
-    local message = table.concat({
-        "**Reward Results**",
-        "```",
-        rewardText,
-        "```",
-        "**Accessory Pity:** " .. pity,
-        "━━━━━━━━━━━━━━━━━━━━"
-    }, "\n")
+    local TimeText = ResultLayout:WaitForChild("TimeText", 5)
 
+    local message = table.concat({
+    "**Reward Results**",
+    "```",
+    rewardText,
+    "```",
+    "**Time:** " .. TimeText.Text,
+    "**Accessory Pity:** " .. PityCount.Text,
+    "━━━━━━━━━━━━━━━━━━━━"
+}, "\n")
     local success, err = pcall(function()
         Request({
             Url = Webhook,
