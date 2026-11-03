@@ -6,10 +6,16 @@ while not starterGui do
     starterGui = game:GetService("StarterGui")
 end
 
+local VIM = game:GetService("VirtualInputManager")
+while not VIM do
+task.wait(1)
+VIM = game:GetService("VirtualInputManager")
+end
+
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 13",
+        Text = "Ads fuckery 14",
         Duration = 5
     })
 end)
@@ -93,7 +99,7 @@ local SETTINGS = {
 
 -- 360 spin while Skill 1 is being cast
 local SPIN = {
-    Enabled = true,
+    Enabled = false,
     Duration = 1,         -- seconds of spin added by EACH Skill 1 cast (stacks on top of what is left)
     Spins = 2,              -- full 360s per Duration (keep this at 3 or more)
     MaxDuration = 4,        -- cap on stacked spin time, so it can't pile up forever
