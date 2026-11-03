@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 3",
+        Text = "Ads fuckery 4",
         Duration = 5
     })
 end)
@@ -1353,14 +1353,6 @@ local CAST_PRIORITY = {
 -- BOOTSTRAP
 --==================================================
 
-local retrybtn = game:GetService("Players").LocalPlayer.PlayerGui.UniversalGui.UniversalCenterUIFrame.ResultUI
-
-retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
-    if retrybtn.Visible == true then
-        local Event = game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent
-        Event:FireServer("RetryDungeon")
-    end
-end)
 
 -- Shut down an older copy of this script if it is still running
 local previous = env.__FarmEngine
@@ -1399,3 +1391,65 @@ if monstersFolder and state.alive then
     })
 
 end
+
+local retrybtn = Player:WaitForChild("PlayerGui", 10).UniversalGui.UniversalCenterUIFrame.ResultUI
+
+retrybtn:GetPropertyChangedSignal("Visible"):Connect(function()
+    if retrybtn.Visible == true then
+        local Event = game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent
+        Event:FireServer("RetryDungeon")
+    end
+end)
+
+local HttpService = game:GetService("HttpService")
+
+local rewardGrid = Players.LocalPlayer.PlayerGui
+    .UniversalGui.UniversalCenterUIFrame.ResultUI.Frame
+    .ResultLayout.RewardFrame.RewardGridFrame
+
+local webhook = "https://discord.com/api/webhooks/1563018801447178361/_SnlgYdYUOvAKsld0FPLD2Txr4RAnBlfDGmNk1RecgWUubWy8VC9LMgkTw5r5oXBWNBW"
+
+local request = request or http_request or (syn and syn.request)
+
+local function sendReward(child)
+    local rewardName = child.Name:gsub("%s*ImageLabel$", "")
+    local amount = nil
+
+    -- Search nested TextLabels
+    for _, descendant in ipairs(child:GetDescendants()) do
+        if descendant:IsA("TextLabel") then
+            local text = descendant.Text:match("^%s*(.-)%s*$")
+
+            -- Only accept numeric amounts, optionally prefixed by x
+            if text:match("^[x×]?%d+$") then
+                amount = text
+                break
+            end
+        end
+    end
+
+    local message = amount
+        and ("**" .. rewardName .. "** x" .. amount)
+        or ("**" .. rewardName .. "**")
+
+    local success, err = pcall(function()
+        request({
+            Url = webhook,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json"
+            },
+            Body = HttpService:JSONEncode({
+                content = message
+            })
+        })
+    end)
+
+    if not success then
+        warn("Webhook failed:", err)
+    end
+end
+
+rewardGrid.ChildAdded:Connect(function(child)
+    sendReward(child)
+end)
