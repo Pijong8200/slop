@@ -1,1 +1,1376 @@
-loadtsring
+repeat task.wait() until game:IsLoaded()
+
+local starterGui = game:GetService("StarterGui")
+while not starterGui do
+    task.wait(0.5)
+    starterGui = game:GetService("StarterGui")
+end
+
+pcall(function()
+    starterGui:SetCore("SendNotification", {
+        Title = "Success!",
+        Text = "Ads fuckery",
+        Duration = 5
+    })
+end)
+
+local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
+
+if queue then
+    queue([[
+        repeat task.wait() until game:IsLoaded()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/claudery"))()
+    ]])
+
+    print(1)
+end
+
+--==================================================
+-- SERVICES
+--==================================================
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+
+--==================================================
+-- REFERENCES
+--==================================================
+
+local Player = Players.LocalPlayer
+
+-- Filled in at the bottom once workspace.Folders.Monsters exists.
+-- It is NOT waited on here, so the room / auto-sell code can run in the lobby.
+local monstersFolder = nil
+
+-- Lets a re-run of this script shut down the previous copy
+local env = (type(getgenv) == "function" and getgenv()) or _G
+
+
+--==================================================
+-- SETTINGS
+--==================================================
+
+local SETTINGS = {
+    Speed = 500,            -- studs per second (math.huge = instant snap to the next mob)
+    AttackRange = 35,       -- M1 + casts start when the mob is this close
+    StopDistance = 7,       -- how far in front of the mob you stand
+
+    ClickDelay = 0.1,       -- seconds between basic attack (M1) remotes
+    CastGap = 0,            -- min seconds between two casts (0 = up to one cast per frame)
+    RecastGuard = 0.25,     -- after casting a skill, ignore that skill this long so the server's cooldown can come back
+    ReadyWithin = 0.1,      -- cast when this much cooldown (or less) is left; offsets network lag (the game's own client allows 0.5)
+
+    ToggleKey = Enum.KeyCode.RightControl, -- pause / resume the farm
+
+    Debug = false,          -- print every cast, why each target was dropped, rarities seen by auto-sell
+    DebugDump = false,      -- print every attribute / value object of each new target
+}
+
+-- 360 spin while Skill 1 is being cast
+local SPIN = {
+    Enabled = true,
+    Duration = 1.5,         -- seconds of spin added by EACH Skill 1 cast (stacks on top of what is left)
+    Spins = 4,              -- full 360s per Duration (keep this at 3 or more)
+    MaxDuration = 6,        -- cap on stacked spin time, so it can't pile up forever
+}
+
+-- Cards of these rarities get sold (case-insensitive, must match the game's rarity names)
+local AUTO_SELL = {
+    Enabled = true,
+    Rarities = { "Common", "Uncommon", "Epic", "Legendary" },
+    SkipLimited = true,     -- never sell cards flagged Limited, even if the rarity matches
+    Interval = 30,          -- seconds between sell passes
+    BatchSize = 100,        -- cards per MassDeleteCardsFromInventory call
+}
+
+-- Created when workspace.Leaderboards shows up (lobby), then started after StartDelay
+local ROOM = {
+    Enabled = true,
+    DetectDelay = 3,        -- wait after Leaderboards is detected (lets the game finish loading)
+    StartDelay = 1,         -- wait between CreateRoom and TeleportPlayers
+    Retries = 5,
+    RetryDelay = 5,
+    Request = {
+        Difficulty = "Nightmare",
+        Hardcore = true,
+        FriendsOnly = true,
+        MapName = "Titan Dimension",
+    },
+}
+
+-- Anything in this table counts as "this mob is dead"
+local DEATH = {
+    MinHealth = 1, -- health below this = dead (0.4 hp is dead, not alive)
+
+    -- true attribute / BoolValue child with one of these names = dead
+    FlagNames = { "Dead", "IsDead", "Dying", "Died" },
+
+    -- number attribute / NumberValue / IntValue child with one of these names below MinHealth = dead
+    HealthNames = { "Health", "HP", "CurrentHealth", "CurrentHP" },
+}
+
+
+--==================================================
+-- DEBUG
+--==================================================
+
+local function debugPrint(...)
+
+    if SETTINGS.Debug then
+        print("[Farm Engine]", ...)
+    end
+
+end
+
+local function dumpMob(mob)
+
+    print("[Farm Engine] ---- target dump:", mob.Name)
+
+    local hum = mob:FindFirstChildOfClass("Humanoid")
+
+    if hum then
+        print("  Humanoid:", hum.Health, "/", hum.MaxHealth, "state:", hum:GetState().Name)
+    else
+        print("  Humanoid: none")
+    end
+
+    for name, value in pairs(mob:GetAttributes()) do
+        print("  attribute", name, "=", value)
+    end
+
+    for _, obj in ipairs(mob:GetDescendants()) do
+        if obj:IsA("ValueBase") then
+            print("  value", obj:GetFullName(), "=", obj.Value)
+        end
+    end
+
+end
+
+
+--==================================================
+-- MOB HELPERS
+--==================================================
+
+local function getRoot(mob)
+
+    local root = mob:FindFirstChild("HumanoidRootPart")
+
+    if root and root:IsA("BasePart") then
+        return root
+    end
+
+    if mob:IsA("Model") and mob.PrimaryPart then
+        return mob.PrimaryPart
+    end
+
+    return mob:FindFirstChildWhichIsA("BasePart")
+
+end
+
+-- Returns a reason string if the mob is dead / gone, nil if it is alive
+local function deathReason(mob)
+
+    if not mob or mob.Parent ~= monstersFolder then
+        return "removed from Monsters folder"
+    end
+
+    local hum = mob:FindFirstChildOfClass("Humanoid")
+
+    if hum then
+
+        if hum.Health < DEATH.MinHealth then
+            return "humanoid health below " .. DEATH.MinHealth
+        end
+
+        if hum:GetState() == Enum.HumanoidStateType.Dead then
+            return "humanoid state is Dead"
+        end
+
+    end
+
+    for _, name in ipairs(DEATH.FlagNames) do
+
+        if mob:GetAttribute(name) == true then
+            return "attribute " .. name
+        end
+
+        local obj = mob:FindFirstChild(name)
+
+        if obj and obj:IsA("BoolValue") and obj.Value then
+            return "BoolValue " .. name
+        end
+
+    end
+
+    for _, name in ipairs(DEATH.HealthNames) do
+
+        local attr = mob:GetAttribute(name)
+
+        if type(attr) == "number" and attr < DEATH.MinHealth then
+            return "attribute " .. name .. " below " .. DEATH.MinHealth
+        end
+
+        local obj = mob:FindFirstChild(name)
+
+        if obj
+            and (obj:IsA("NumberValue") or obj:IsA("IntValue"))
+            and obj.Value < DEATH.MinHealth then
+
+            return "value " .. name .. " below " .. DEATH.MinHealth
+
+        end
+
+    end
+
+    if not getRoot(mob) then
+        return "no root part"
+    end
+
+    return nil
+
+end
+
+
+--==================================================
+-- PLAYER HELPERS
+--==================================================
+
+-- Always fetched fresh, so respawning never leaves stale references
+local function getMyRoot()
+
+    local character = Player.Character
+
+    if not character then
+        return nil
+    end
+
+    local root = character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+    if root and humanoid and humanoid.Health > 0 then
+        return root
+    end
+
+    return nil
+
+end
+
+
+--==================================================
+-- STATE
+--==================================================
+
+local state = {
+    alive = false,    -- script instance alive (false after stop)
+    running = false,  -- farm engine alive
+    enabled = false,  -- toggled by the toggle key
+    target = nil,
+    inRange = false,
+}
+
+local engineConnections = {}
+local targetConnections = {}
+
+
+--==================================================
+-- GAME ACCESS (modules + remotes)
+--==================================================
+
+-- require(root.A.B.C) with waits, never throws
+local function safeRequire(root, ...)
+
+    local path = { ... }
+
+    local ok, result = pcall(function()
+
+        local node = root
+
+        for _, name in ipairs(path) do
+            node = node and node:WaitForChild(name, 10)
+        end
+
+        return node and require(node)
+
+    end)
+
+    if ok then
+        return result
+    end
+
+    return nil
+
+end
+
+local directoryCache = nil
+
+local function getDirectory()
+
+    if not directoryCache then
+        directoryCache = safeRequire(ReplicatedStorage, "Modules", "Directory")
+    end
+
+    return directoryCache
+
+end
+
+local REMOTE_INFO = {
+    Event = { class = "RemoteEvent", name = "MainRemoteEvent", group = "RemoteEvents" },
+    Function = { class = "RemoteFunction", name = "MainRemoteFunction", group = "RemoteFunctions" },
+}
+
+local remoteCache = {}
+
+-- kind = "Event" (MainRemoteEvent) or "Function" (MainRemoteFunction)
+local function getRemote(kind)
+
+    local cached = remoteCache[kind]
+
+    if cached and cached.Parent then
+        return cached
+    end
+
+    local info = REMOTE_INFO[kind]
+    local remote = nil
+    local directory = getDirectory()
+
+    if type(directory) == "table" and type(directory[info.group]) == "table" then
+        remote = directory[info.group][info.name]
+    end
+
+    -- Fallback: search ReplicatedStorage by name
+    if typeof(remote) ~= "Instance" then
+        remote = ReplicatedStorage:FindFirstChild(info.name, true)
+    end
+
+    if typeof(remote) == "Instance" and remote:IsA(info.class) then
+        remoteCache[kind] = remote
+        return remote
+    end
+
+    return nil
+
+end
+
+local function describeResult(ok, result)
+
+    if not ok then
+        return tostring(result)
+    end
+
+    if type(result) == "table" and result.message ~= nil then
+        return tostring(result.message)
+    end
+
+    return tostring(result)
+
+end
+
+-- The game's own ClientSkillModule, only used to read cooldowns (loaded in the bootstrap)
+local skillModule = nil
+
+-- Seconds of cooldown left. Keys are the ones the module uses: 1-5, "Assist1", "Fruit2", ...
+local function cooldownLeft(kind, index)
+
+    if type(skillModule) ~= "table" or type(skillModule.returnCooldown) ~= "function" then
+        return 0
+    end
+
+    local key = kind == "Skill" and index or (kind .. index)
+    local ok, value = pcall(skillModule.returnCooldown, key)
+
+    if ok and type(value) == "number" then
+        return value
+    end
+
+    return 0
+
+end
+
+
+--==================================================
+-- SKILL 1 SPIN (360, fast, stacks)
+--==================================================
+
+local TAU = math.pi * 2
+local SPIN_RATE = SPIN.Spins / SPIN.Duration -- revolutions per second
+
+local spinUntil = 0
+local spinAngle = 0
+
+-- Every Skill 1 cast adds SPIN.Duration on top of whatever spin time is left
+local function extendSpin()
+
+    if not SPIN.Enabled then
+        return
+    end
+
+    local now = os.clock()
+
+    spinUntil = math.min(math.max(spinUntil, now) + SPIN.Duration, now + SPIN.MaxDuration)
+
+end
+
+-- Returns the extra yaw (radians) to add this frame.
+-- When the time runs out it still finishes the current turn, so it ends facing the mob.
+local function advanceSpin(deltaTime)
+
+    local now = os.clock()
+
+    if now >= spinUntil and spinAngle == 0 then
+        return 0
+    end
+
+    spinAngle = spinAngle + deltaTime * SPIN_RATE * TAU
+
+    if spinAngle >= TAU then
+
+        if now < spinUntil then
+            spinAngle = spinAngle - TAU
+        else
+            spinAngle = 0
+        end
+
+    end
+
+    return spinAngle
+
+end
+
+
+--==================================================
+-- CASTING + BASIC ATTACK (remotes only, no key / mouse input)
+--==================================================
+
+-- Same remotes + payload the game's ClientSkillModule fires
+local CAST_ACTIONS = {
+    Skill = "UseSkill",         -- keys 1-5
+    Assist = "UseAssistSkill",  -- keys E / R
+    Fruit = "UseFruitSkill",    -- keys Z / X
+}
+
+-- The CFrame we report to the server: our position, facing the target.
+-- Keeps every cast / attack pointed at the mob even while the character is spinning.
+local function aimCFrame(root)
+
+    local targetRoot = state.target and getRoot(state.target)
+
+    if targetRoot then
+
+        local flat = Vector3.new(targetRoot.Position.X, root.Position.Y, targetRoot.Position.Z)
+
+        if (flat - root.Position).Magnitude > 0.01 then
+            return CFrame.lookAt(root.Position, flat)
+        end
+
+    end
+
+    return root.CFrame
+
+end
+
+local function castSkill(kind, index)
+
+    local action = CAST_ACTIONS[kind]
+    local root = getMyRoot()
+    local remote = getRemote("Event")
+
+    if not (action and root and remote) then
+        return false
+    end
+
+    remote:FireServer(action, { hrpCFrame = aimCFrame(root) }, index)
+
+    if kind == "Skill" and index == 1 then
+        extendSpin()
+    end
+
+    return true
+
+end
+
+-- One basic attack remote, always as combo 1 (no combo counting)
+local function basicAttack()
+
+    local root = getMyRoot()
+    local remote = getRemote("Event")
+
+    if not (root and remote) then
+        return false
+    end
+
+    -- attackNumber is the normal key, combo is what the custom basic attacks read; both = 1
+    remote:FireServer("UseSkill", {
+        attackNumber = 1,
+        combo = 1,
+        hrpCFrame = aimCFrame(root),
+    }, "BasicAttack")
+
+    return true
+
+end
+
+
+--==================================================
+-- TARGET CLEANUP
+--==================================================
+
+local function disconnectTarget()
+
+    for _, connection in ipairs(targetConnections) do
+        connection:Disconnect()
+    end
+
+    table.clear(targetConnections)
+
+end
+
+local function clearTarget()
+
+    disconnectTarget()
+
+    state.target = nil
+    state.inRange = false
+
+end
+
+
+--==================================================
+-- FIND NEAREST ALIVE MOB
+--==================================================
+
+local function getNearestMob(fromPosition, ignore)
+
+    local closestMob = nil
+    local shortestDistance = math.huge
+
+    for _, mob in ipairs(monstersFolder:GetChildren()) do
+
+        if mob ~= ignore and not deathReason(mob) then
+
+            local root = getRoot(mob)
+
+            if root then
+
+                local distance = (fromPosition - root.Position).Magnitude
+
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    closestMob = mob
+                end
+
+            end
+
+        end
+
+    end
+
+    return closestMob
+
+end
+
+
+--==================================================
+-- TARGET WATCHING + ACQUISITION
+--==================================================
+
+local acquireTarget -- defined below, watchTarget needs it
+
+-- Every signal that can mean "this mob died" re-checks it instantly
+-- and swaps the target inside the same callback (no defer, no waiting for a frame)
+local function watchTarget(mob)
+
+    local function onChange()
+
+        if state.target ~= mob then
+            return
+        end
+
+        local reason = deathReason(mob)
+
+        if reason then
+            debugPrint("target dead (" .. reason .. "):", mob.Name)
+            acquireTarget(mob)
+        end
+
+    end
+
+    local function watch(signal)
+        table.insert(targetConnections, signal:Connect(onChange))
+    end
+
+    local humanoid = mob:FindFirstChildOfClass("Humanoid")
+
+    if humanoid then
+        watch(humanoid.HealthChanged)
+        watch(humanoid.Died)
+        watch(humanoid.StateChanged)
+    end
+
+    watch(mob.AncestryChanged)
+    watch(mob.AttributeChanged)
+    watch(mob.ChildRemoved)
+
+    for _, list in ipairs({ DEATH.FlagNames, DEATH.HealthNames }) do
+
+        for _, name in ipairs(list) do
+
+            local obj = mob:FindFirstChild(name)
+
+            if obj and obj:IsA("ValueBase") then
+                watch(obj.Changed)
+            end
+
+        end
+
+    end
+
+end
+
+acquireTarget = function(ignore)
+
+    clearTarget()
+
+    if not state.running or not state.enabled then
+        return
+    end
+
+    local myRoot = getMyRoot()
+
+    if not myRoot then
+        return
+    end
+
+    local mob = getNearestMob(myRoot.Position, ignore)
+
+    if not mob then
+        return
+    end
+
+    local root = getRoot(mob)
+
+    state.target = mob
+    state.inRange = (root.Position - myRoot.Position).Magnitude <= SETTINGS.AttackRange
+
+    watchTarget(mob)
+
+    debugPrint("new target:", mob.Name)
+
+    if SETTINGS.DebugDump then
+        dumpMob(mob)
+    end
+
+end
+
+-- Returns true if there is a living target (swaps instantly if the old one is dead)
+local function refreshTarget()
+
+    local mob = state.target
+
+    if mob then
+
+        local reason = deathReason(mob)
+
+        if not reason then
+            return true
+        end
+
+        debugPrint("target dead (" .. reason .. "):", mob.Name)
+
+    end
+
+    acquireTarget(mob)
+
+    return state.target ~= nil
+
+end
+
+-- Called right before every attack / cast
+local function canAttack()
+
+    if not state.enabled then
+        return false
+    end
+
+    if not refreshTarget() then
+        return false
+    end
+
+    return state.inRange
+
+end
+
+
+--==================================================
+-- MOVEMENT (+ spin)
+--==================================================
+
+local function step(deltaTime)
+
+    if not state.enabled then
+        return
+    end
+
+    local myRoot = getMyRoot()
+
+    if not myRoot then
+        clearTarget()
+        return
+    end
+
+    if not refreshTarget() then
+        return
+    end
+
+    local root = getRoot(state.target)
+
+    local myPosition = myRoot.Position
+    local targetPosition = root.Position
+
+    -- Stand in front of the enemy
+    local standPosition = targetPosition + root.CFrame.LookVector * SETTINGS.StopDistance
+    local offset = standPosition - myPosition
+    local distance = offset.Magnitude
+
+    state.inRange = (targetPosition - myPosition).Magnitude <= SETTINGS.AttackRange
+
+    local newPosition = standPosition
+
+    if distance > 0.05 then
+
+        local maxStep = SETTINGS.Speed * deltaTime
+
+        if maxStep < distance then
+            newPosition = myPosition + offset.Unit * maxStep
+        end
+
+    end
+
+    local lookAt = Vector3.new(targetPosition.X, newPosition.Y, targetPosition.Z)
+
+    if (lookAt - newPosition).Magnitude > 0.01 then
+
+        -- face the mob, then add the Skill 1 spin on top (0 when not spinning)
+        myRoot.CFrame = CFrame.lookAt(newPosition, lookAt) * CFrame.Angles(0, advanceSpin(deltaTime), 0)
+
+    else
+
+        myRoot.CFrame = CFrame.new(newPosition) * myRoot.CFrame.Rotation
+
+    end
+
+    myRoot.AssemblyLinearVelocity = Vector3.zero
+    myRoot.AssemblyAngularVelocity = Vector3.zero
+
+end
+
+
+--==================================================
+-- M1 THREAD (basic attack remote)
+--==================================================
+
+local function startClickLoop()
+
+    task.spawn(function()
+
+        while state.running do
+
+            if canAttack() then
+                basicAttack()
+            end
+
+            task.wait(SETTINGS.ClickDelay)
+
+        end
+
+    end)
+
+end
+
+
+--==================================================
+-- CASTER THREAD (priority list, casts the moment a skill is ready)
+--==================================================
+
+local lastFired = {}
+local lastCastAt = 0
+
+local function isReady(kind, index, now)
+
+    local key = kind .. index
+
+    if now - (lastFired[key] or 0) < SETTINGS.RecastGuard then
+        return false
+    end
+
+    return cooldownLeft(kind, index) <= SETTINGS.ReadyWithin
+
+end
+
+-- priority[1] is checked first every frame, so Skill 1 always wins when it is ready.
+-- At most one cast per frame (the highest-priority ready skill), no fixed waits.
+local function startCasterLoop(priority)
+
+    task.spawn(function()
+
+        while state.running do
+
+            if #priority > 0 and canAttack() then
+
+                local now = os.clock()
+
+                if now - lastCastAt >= SETTINGS.CastGap then
+
+                    for _, entry in ipairs(priority) do
+
+                        if isReady(entry[1], entry[2], now) then
+
+                            if castSkill(entry[1], entry[2]) then
+                                lastFired[entry[1] .. entry[2]] = now
+                                lastCastAt = now
+                                debugPrint("cast", entry[1] .. entry[2])
+                            end
+
+                            break
+
+                        end
+
+                    end
+
+                end
+
+            end
+
+            RunService.Heartbeat:Wait()
+
+        end
+
+    end)
+
+end
+
+
+--==================================================
+-- AUTO SELL CARDS
+--==================================================
+
+local sellRarities = {}
+
+for _, rarity in ipairs(AUTO_SELL.Rarities) do
+    sellRarities[string.lower(rarity)] = true
+end
+
+local function looksLikeInventory(object)
+
+    return type(object) == "table"
+        and type(rawget(object, "Cards")) == "table"
+        and type(rawget(object, "CardSlots")) == "table"
+
+end
+
+-- InventoryModule keeps its Inventory object private, so grab it from the
+-- module's upvalues (or from the garbage collector as a fallback).
+local function findInventory()
+
+    local module = safeRequire(Player:WaitForChild("PlayerGui"), "Modules", "InventoryModule")
+
+    local getUpvalue = (debug and debug.getupvalue) or getupvalue
+
+    if type(module) == "table" and type(getUpvalue) == "function" then
+
+        for _, name in ipairs({ "createCardDataEntry", "refreshInventory", "updateSlot", "UpdateEntry" }) do
+
+            local fn = module[name]
+
+            if type(fn) == "function" then
+
+                for index = 1, 6 do
+
+                    local ok, value = pcall(getUpvalue, fn, index)
+
+                    if ok and looksLikeInventory(value) then
+                        return value
+                    end
+
+                end
+
+            end
+
+        end
+
+    end
+
+    if type(getgc) == "function" then
+
+        local ok, objects = pcall(getgc, true)
+
+        if ok and type(objects) == "table" then
+
+            for _, object in ipairs(objects) do
+
+                if looksLikeInventory(object) then
+                    return object
+                end
+
+            end
+
+        end
+
+    end
+
+    return nil
+
+end
+
+local function isInOtherLoadout(inventory, uiModule, id)
+
+    local items = inventory.OtherLoadoutItems
+
+    if type(items) == "table" and items[id] ~= nil then
+        return true
+    end
+
+    if type(uiModule) == "table" and type(uiModule.isInOtherLoadout) == "function" then
+
+        local ok, result = pcall(uiModule.isInOtherLoadout, id)
+
+        if ok and result then
+            return true
+        end
+
+    end
+
+    return false
+
+end
+
+local function collectSellableCards(inventory, cardInfo, uiModule)
+
+    local ids = {}
+    local seen = {}
+
+    for id, card in pairs(inventory.Cards) do
+
+        if type(card) == "table" then
+
+            local info = cardInfo[card.CardName]
+
+            if info then
+
+                local rarity = card.IsDivine and "Divine" or info.rarity
+
+                if type(rarity) == "string" then
+                    seen[rarity] = (seen[rarity] or 0) + 1
+                end
+
+                local sellable = type(rarity) == "string"
+                    and sellRarities[string.lower(rarity)]
+                    and not card.Locked
+                    and not card.Equipped
+                    and not card.IsDivine
+                    and not (AUTO_SELL.SkipLimited and info.Limited)
+
+                if sellable and not isInOtherLoadout(inventory, uiModule, id) then
+                    table.insert(ids, id)
+                end
+
+            end
+
+        end
+
+    end
+
+    if SETTINGS.Debug then
+
+        for rarity, count in pairs(seen) do
+            print("[Farm Engine] auto-sell saw rarity:", rarity, count)
+        end
+
+    end
+
+    return ids
+
+end
+
+local lastSellMessage = nil
+
+local function sellPass(inventory, cardInfo, uiModule)
+
+    local ids = collectSellableCards(inventory, cardInfo, uiModule)
+
+    if #ids == 0 then
+        debugPrint("auto-sell: nothing to sell")
+        return
+    end
+
+    local remote = getRemote("Function")
+
+    if not remote then
+        warn("[Farm Engine] MainRemoteFunction not found, can't sell")
+        return
+    end
+
+    for first = 1, #ids, AUTO_SELL.BatchSize do
+
+        if not state.alive then
+            return
+        end
+
+        local last = math.min(first + AUTO_SELL.BatchSize - 1, #ids)
+        local batch = {}
+
+        for i = first, last do
+            batch[ids[i]] = true
+        end
+
+        -- Same call the game's mass sell button makes
+        local ok, result = pcall(function()
+            return remote:InvokeServer("MassDeleteCardsFromInventory", batch)
+        end)
+
+        local message = describeResult(ok, result)
+
+        if message ~= lastSellMessage or SETTINGS.Debug then
+            print("[Farm Engine] Auto-sell:", last - first + 1, "cards ->", message)
+        end
+
+        lastSellMessage = message
+
+        task.wait(0.5)
+
+    end
+
+end
+
+local function startAutoSell()
+
+    task.spawn(function()
+
+        local inventory = nil
+
+        for _ = 1, 30 do
+
+            if not state.alive then
+                return
+            end
+
+            inventory = findInventory()
+
+            if inventory then
+                break
+            end
+
+            task.wait(2)
+
+        end
+
+        if not inventory then
+            warn("[Farm Engine] Auto-sell off: couldn't reach the Inventory object (needs getupvalue or getgc)")
+            return
+        end
+
+        local settingsModule = safeRequire(ReplicatedStorage, "Modules", "settings")
+        local cardInfo = type(settingsModule) == "table" and settingsModule.CardInfo
+
+        if not cardInfo then
+            warn("[Farm Engine] Auto-sell off: settings.CardInfo not found")
+            return
+        end
+
+        local uiModule = safeRequire(Player:WaitForChild("PlayerGui"), "Modules", "UIModule")
+
+        print("[Farm Engine] Auto-sell on:", table.concat(AUTO_SELL.Rarities, ", "))
+
+        while state.alive do
+
+            sellPass(inventory, cardInfo, uiModule)
+
+            task.wait(AUTO_SELL.Interval)
+
+        end
+
+    end)
+
+end
+
+
+--==================================================
+-- AUTO ROOM (create + start when workspace.Leaderboards exists)
+--==================================================
+
+local function startRoomFlow()
+
+    task.spawn(function()
+
+        while state.alive and not workspace:FindFirstChild("Leaderboards") do
+            task.wait(1)
+        end
+
+        if not state.alive then
+            return
+        end
+
+        print("[Farm Engine] Leaderboards found, creating room")
+
+        task.wait(ROOM.DetectDelay)
+
+        -- Create (retry until the server accepts it)
+        local created = false
+
+        for attempt = 1, ROOM.Retries do
+
+            if not state.alive then
+                return
+            end
+
+            local remote = getRemote("Function")
+
+            if not remote then
+                warn("[Farm Engine] MainRemoteFunction not found, can't create room")
+                return
+            end
+
+            local ok, result = pcall(function()
+                return remote:InvokeServer("CreateRoom", ROOM.Request)
+            end)
+
+            if ok and type(result) == "table" and result.status == "Success" then
+                created = true
+                print("[Farm Engine] Room created:", ROOM.Request.MapName, ROOM.Request.Difficulty)
+                break
+            end
+
+            print("[Farm Engine] CreateRoom failed (" .. attempt .. "/" .. ROOM.Retries .. "):", describeResult(ok, result))
+
+            task.wait(ROOM.RetryDelay)
+
+        end
+
+        if not created then
+            return
+        end
+
+        task.wait(ROOM.StartDelay)
+
+        -- Start (retry a few times in case the server wants a moment)
+        for attempt = 1, ROOM.Retries do
+
+            if not state.alive then
+                return
+            end
+
+            local remote = getRemote("Function")
+
+            if not remote then
+                return
+            end
+
+            local ok, result = pcall(function()
+                return remote:InvokeServer("TeleportPlayers")
+            end)
+
+            if ok and type(result) == "table" and result.status == "Success" then
+                print("[Farm Engine] Room started")
+                return
+            end
+
+            print("[Farm Engine] TeleportPlayers failed (" .. attempt .. "/" .. ROOM.Retries .. "):", describeResult(ok, result))
+
+            task.wait(ROOM.RetryDelay)
+
+        end
+
+    end)
+
+end
+
+
+--==================================================
+-- STOP / START
+--==================================================
+
+local function stopFarm()
+
+    state.alive = false
+    state.running = false
+    state.enabled = false
+
+    clearTarget()
+
+    for _, connection in ipairs(engineConnections) do
+        connection:Disconnect()
+    end
+
+    table.clear(engineConnections)
+
+end
+
+local function startFarm(sequence)
+
+    sequence = sequence or {}
+
+    local priority = sequence.priority or {}
+
+    state.running = true
+    state.enabled = true
+
+    -- Initial setup casts
+    for _, entry in ipairs(sequence.setup or {}) do
+        castSkill(entry[1], entry[2])
+        task.wait(0.1)
+    end
+
+    if not state.running then
+        return
+    end
+
+    -- Movement + safety checks
+    table.insert(engineConnections, RunService.Heartbeat:Connect(step))
+
+    table.insert(engineConnections, RunService.PreRender:Connect(function()
+
+        if state.enabled then
+            refreshTarget()
+        end
+
+    end))
+
+    -- Grab a target the moment a mob spawns while idle
+    table.insert(engineConnections, monstersFolder.ChildAdded:Connect(function()
+
+        if state.enabled and not state.target then
+            refreshTarget()
+        end
+
+    end))
+
+    -- Pause / resume key
+    table.insert(engineConnections, UserInputService.InputBegan:Connect(function(input, processed)
+
+        if processed then
+            return
+        end
+
+        if input.KeyCode == SETTINGS.ToggleKey then
+
+            state.enabled = not state.enabled
+
+            if not state.enabled then
+                clearTarget()
+            end
+
+            print("[Farm Engine]", state.enabled and "Resumed" or "Paused")
+
+        end
+
+    end))
+
+    startClickLoop()
+    startCasterLoop(priority)
+
+    refreshTarget()
+
+    local names = {}
+
+    for _, entry in ipairs(priority) do
+        table.insert(names, entry[1] .. entry[2])
+    end
+
+    print("[Farm Engine] Running")
+    print("[Farm Engine] Death detection: health < " .. DEATH.MinHealth .. ", Died, state, flags, removal")
+    print("[Farm Engine] Cast priority (cast the moment ready):", table.concat(names, " > "))
+    print("[Farm Engine] Skill 1 spin:", SPIN.Enabled and (SPIN.Spins .. " turns per " .. SPIN.Duration .. "s, stacking") or "off")
+    print("[Farm Engine] Speed:", SETTINGS.Speed)
+    print("[Farm Engine] Pause / resume key:", SETTINGS.ToggleKey.Name)
+
+end
+
+local function waitForMonstersFolder()
+
+    while state.alive do
+
+        local folders = workspace:FindFirstChild("Folders")
+        local folder = folders and folders:FindFirstChild("Monsters")
+
+        if folder then
+            return folder
+        end
+
+        task.wait(1)
+
+    end
+
+    return nil
+
+end
+
+
+--==================================================
+-- SEQUENCES (edit these, nothing above needs to change)
+--==================================================
+
+-- Cast once at the start. { kind, number }
+-- (these were the old X / Z key presses = Fruit 2, Fruit 1; set to {} to disable)
+local SETUP_CASTS = {
+    { "Fruit", 2 },
+    { "Fruit", 1 },
+}
+
+-- Checked top to bottom every frame while a mob is in range; the first READY one is cast.
+-- { kind, number }   kind = "Skill" (1-5) | "Fruit" (1-2) | "Assist" (1-2)
+-- Skill 5 is awakened-only; add { "Skill", 5 } if you want it
+local CAST_PRIORITY = {
+    { "Skill", 1 },     -- always first
+    { "Skill", 4 },
+    { "Skill", 2 },
+    { "Skill", 3 },
+    { "Fruit", 1 },
+    { "Fruit", 2 },
+    { "Assist", 1 },
+    { "Assist", 2 },
+}
+
+
+--==================================================
+-- BOOTSTRAP
+--==================================================
+
+-- Shut down an older copy of this script if it is still running
+local previous = env.__FarmEngine
+
+if previous and previous.stop then
+    pcall(previous.stop)
+end
+
+env.__FarmEngine = { stop = stopFarm }
+
+state.alive = true
+
+if ROOM.Enabled then
+    startRoomFlow()
+end
+
+if AUTO_SELL.Enabled then
+    startAutoSell()
+end
+
+getRemote("Event") -- warm up the cast remote before the first cast
+
+skillModule = safeRequire(Player:WaitForChild("PlayerGui"), "Modules", "ClientSkillModule")
+
+if not skillModule then
+    warn("[Farm Engine] ClientSkillModule not found, can't read cooldowns (casting on RecastGuard timers only)")
+end
+
+monstersFolder = waitForMonstersFolder()
+
+if monstersFolder and state.alive then
+
+    startFarm({
+        setup = SETUP_CASTS,
+        priority = CAST_PRIORITY,
+    })
+
+end
