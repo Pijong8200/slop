@@ -13,12 +13,12 @@ VIM = game:GetService("VirtualInputManager")
 end
 
 if VIM and starterGui then
-task.wait(3)
+task.wait(1)
 end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery part 16",
+        Text = "Ads fuckery 15 part 2",
         Duration = 5
     })
 end)
@@ -86,7 +86,7 @@ local env = (type(getgenv) == "function" and getgenv()) or _G
 
 local SETTINGS = {
     Speed = 600,            -- studs per second (math.huge = instant snap to the next mob)
-    AttackRange = 35,       -- M1 + casts start when the mob is this close
+    AttackRange = 40,       -- M1 + casts start when the mob is this close
     StopDistance = 7,       -- how far in front of the mob you stand
 
     ClickDelay = 1,       -- seconds between basic attack (M1) remotes
@@ -102,10 +102,10 @@ local SETTINGS = {
 
 -- 360 spin while Skill 1 is being cast
 local SPIN = {
-    Enabled = false,
+    Enabled = true,
     Duration = 1,         -- seconds of spin added by EACH Skill 1 cast (stacks on top of what is left)
     Spins = 2,              -- full 360s per Duration (keep this at 3 or more)
-    MaxDuration = 4,        -- cap on stacked spin time, so it can't pile up forever
+    MaxDuration = 1,        -- cap on stacked spin time, so it can't pile up forever
 }
 
 -- Cards of these rarities get sold (case-insensitive, must match the game's rarity names)
@@ -1352,11 +1352,11 @@ local SETUP_CASTS = {
 -- { kind, number }   kind = "Skill" (1-5) | "Fruit" (1-2) | "Assist" (1-2)
 -- Skill 5 is awakened-only; add { "Skill", 5 } if you want it
 local CAST_PRIORITY = {
-    { "Skill", 5 },     -- always first
-    { "Skill", 1 },
+    { "Skill", 1 },     -- always first
+    { "Skill", 4 },
     { "Skill", 2 },
     { "Skill", 3 },
-    { "Skill", 4 },
+    { "Skill", 1 },
     { "Fruit", 1 },
     { "Fruit", 2 },
     { "Assist", 1 },
