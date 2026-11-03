@@ -1,3 +1,15 @@
+
+local queue = queue_on_teleport or (syn and syn.queue_on_teleport)
+
+if queue then
+    queue([[
+        repeat task.wait() until game:IsLoaded()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/giant"))()
+    ]])
+
+    print("Game loaded, running v1 of ADS.")
+end
+
 local functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/functions"))()
 
 local tapkey = functions.tapkey
