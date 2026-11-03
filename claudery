@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 10",
+        Text = "Ads fuckery 11",
         Duration = 5
     })
 end)
@@ -28,13 +28,13 @@ end
 --==================================================
 -- SERVICES
 --==================================================
+task.wait(2)
 
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
-
 
 --==================================================
 -- REFERENCES
