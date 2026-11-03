@@ -9,7 +9,7 @@ end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 9",
+        Text = "Ads fuckery 10",
         Duration = 5
     })
 end)
