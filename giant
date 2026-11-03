@@ -7,7 +7,7 @@ if queue then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/giant"))()
     ]])
 
-    print("Game loaded, running v1 of ADS.")
+    print("Game loaded, running v1.1 of ADS.")
 end
 
 local functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pijong8200/slop/refs/heads/main/functions"))()
@@ -16,6 +16,8 @@ local tapkey = functions.tapkey
 local tweentp = functions.tweentp
 
 tapkey("x")
+task.wait(0.2)
+tapkey(4)
 tapkey(4)
 task.wait(0.5)
 tweentp(CFrame.new(-200, 37, -25, -1, 0, 1, 0, 1, 0, -1, 0, -1))
