@@ -2,23 +2,23 @@ repeat task.wait() until game:IsLoaded()
 
 local starterGui = game:GetService("StarterGui")
 while not starterGui do
-    task.wait(0.5)
+    task.wait(1)
     starterGui = game:GetService("StarterGui")
 end
 
 local VIM = game:GetService("VirtualInputManager")
 while not VIM do
-task.wait(1)
+task.wait(3)
 VIM = game:GetService("VirtualInputManager")
 end
 
 if VIM and starterGui then
-task.wait(1)
+task.wait(2)
 end
 pcall(function()
     starterGui:SetCore("SendNotification", {
         Title = "Success!",
-        Text = "Ads fuckery 15 part 2",
+        Text = "Ads fuckery 15 part 3",
         Duration = 5
     })
 end)
